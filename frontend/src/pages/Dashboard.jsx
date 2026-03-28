@@ -5,9 +5,12 @@ import SellerDashboard from "./SellerDashboard";
 import MyProperties from "./MyProperties";         
 import AddProperty from "./AddProperty";           
 import EditProperty from "./EditProperty";         
+import BuyerDashboard from "./BuyerDashboard";
+import FavoritesPage from "./FavoritesPage";
+import BuyerProfilePage from "./BuyerProfilePage";
 
 export default function Dashboard({ user, setPage: setRootPage, onLogout, showToast }) {
-  const [innerPage, setInnerPage] = useState("main");
+  const [innerPage, setInnerPage] = useState(() => localStorage.getItem("dashboardView") || "main");
   const [editTarget, setEditTarget] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -27,9 +30,18 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
     loadProfile();
   }, []);
 
+  useEffect(() => {
+    if (user?.role !== "buyer") {
+      localStorage.removeItem("dashboardView");
+      return;
+    }
+
+    localStorage.setItem("dashboardView", innerPage);
+  }, [innerPage, user]);
+
   if (user?.role === "seller") {
     if (innerPage === "sellerDashboard" || innerPage === "main") {
-      return <SellerDashboard user={user} setPage={setInnerPage} onLogout={onLogout} />;
+      return <SellerDashboard user={user} setPage={setInnerPage} setRootPage={setRootPage} onLogout={onLogout} />;
     }
     if (innerPage === "myProperties") {
       return <MyProperties setPage={setInnerPage} setEditTarget={setEditTarget} showToast={showToast} />;
@@ -40,6 +52,34 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
     if (innerPage === "editProperty") {
       return <EditProperty property={editTarget} setPage={setInnerPage} showToast={showToast} />;
     }
+  }
+
+  if (user?.role === "buyer") {
+    if (innerPage === "favorites") {
+      return <FavoritesPage setPage={setInnerPage} setRootPage={setRootPage} onLogout={onLogout} showToast={showToast} />;
+    }
+
+    if (innerPage === "profile") {
+      return (
+        <BuyerProfilePage
+          user={user}
+          setPage={setInnerPage}
+          setRootPage={setRootPage}
+          onLogout={onLogout}
+          showToast={showToast}
+        />
+      );
+    }
+
+    return (
+      <BuyerDashboard
+        user={user}
+        setPage={setInnerPage}
+        setRootPage={setRootPage}
+        onLogout={onLogout}
+        showToast={showToast}
+      />
+    );
   }
 
   const initials = user?.name?.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2) || "U";

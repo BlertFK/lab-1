@@ -13,6 +13,7 @@ router.put("/users/:id", adminController.updateUser);
 
 // Properties
 router.get("/properties", adminController.getAllProperties);
+router.put("/properties/:id", adminController.updateProperty);
 router.delete("/properties/:id", adminController.deleteProperty);
 
 module.exports = router;
