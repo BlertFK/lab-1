@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboard"; // ← SHTO KËTË
 
 export default function App() {
   const [page, setPage] = useState("home");
@@ -21,7 +22,7 @@ export default function App() {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
     showToast(`Welcome back, ${userData.name}!`, "success");
-    setPage("dashboard");
+    setPage(userData.role === "admin" ? "admin" : "dashboard"); // ← NDRYSHO KËTË
   }, [showToast]);
 
   const handleLogout = useCallback(() => {
@@ -36,6 +37,7 @@ export default function App() {
     <>
       {page === "login" && <LoginPage setPage={setPage} onLoginSuccess={handleLoginSuccess} />}
       {page === "register" && <RegisterPage setPage={setPage} showToast={showToast} />}
+      {page === "admin" && user?.role === "admin" && <AdminDashboard />} {/* ← SHTO KËTË */}
       {page === "dashboard" && user && <Dashboard user={user} setPage={setPage} onLogout={handleLogout} showToast={showToast} />}
       {(page === "home" || (!user && page === "dashboard")) && (
         <>

@@ -4,17 +4,19 @@ require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
 const propertyRoutes = require("./routes/propertyRoutes");
+const adminRoutes = require("./routes/adminRoutes");        
 
 const app = express();
 
 // ── Middleware ──────────────────────────────
-app.use(cors());                        // Allow cross-origin requests (React frontend)
-app.use(express.json());                // Parse incoming JSON request bodies
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded form data
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // ── Routes ──────────────────────────────────
 app.use("/api/auth", authRoutes);
 app.use("/api/properties", propertyRoutes);
+app.use("/api/admin", adminRoutes);                    
 
 // Health check route
 app.get("/", (req, res) => {
