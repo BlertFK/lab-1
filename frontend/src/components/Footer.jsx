@@ -5,9 +5,9 @@ export default function Footer() {
                 <div>
                     <div className="footer-brand">UrbanKeys</div>
                     <p className="footer-tagline">Your trusted partner in finding the perfect home. Everyone deserves a place where they truly belong.</p>
-                    <div className="footer-contact-item">📍 123 Estate Ave, New York, NY 10001</div>
-                    <div className="footer-contact-item">📞 (800) 555-REAL</div>
-                    <div className="footer-contact-item">✉️ hello@realestate.com</div>
+                    <div className="footer-contact-item">📍 Muharrem Fejza, 10000, Pristine, Kosovo</div>
+                    <div className="footer-contact-item">📞 049 123 465</div>
+                    <div className="footer-contact-item">✉️ hello@urbankeys.com</div>
                 </div>
                 <div className="footer-col"><p className="footer-col-title">Company</p><a href="#">About Us</a><a href="#">Careers</a><a href="#">Press</a><a href="#">Blog</a></div>
                 <div className="footer-col"><p className="footer-col-title">Services</p><a href="#">Buy Property</a><a href="#">Sell Property</a><a href="#">Rent a Home</a><a href="#">Find an Agent</a></div>
