@@ -36,7 +36,7 @@ export default function App() {
     <>
       {page === "login" && <LoginPage setPage={setPage} onLoginSuccess={handleLoginSuccess} />}
       {page === "register" && <RegisterPage setPage={setPage} showToast={showToast} />}
-      {page === "dashboard" && user && <Dashboard user={user} setPage={setPage} onLogout={handleLogout} />}
+      {page === "dashboard" && user && <Dashboard user={user} setPage={setPage} onLogout={handleLogout} showToast={showToast} />}
       {(page === "home" || (!user && page === "dashboard")) && (
         <>
           <Navbar page={page} setPage={setPage} user={user} onLogout={handleLogout} />

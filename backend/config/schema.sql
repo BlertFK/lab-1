@@ -14,7 +14,17 @@ CREATE TABLE IF NOT EXISTS users (
   created_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. (Optional) Insert a test admin user
--- Password below is "admin123" hashed with bcrypt
--- INSERT INTO users (name, email, password, role)
--- VALUES ('Admin User', 'admin@realestate.com', '$2a$10$exampleHashHere', 'admin');
+CREATE TABLE IF NOT EXISTS properties (
+  id          INT           PRIMARY KEY AUTO_INCREMENT,
+  title       VARCHAR(200)  NOT NULL,
+  description TEXT,
+  price       DECIMAL(12,2) NOT NULL,
+  location    VARCHAR(200)  NOT NULL,
+  type        VARCHAR(100)  NOT NULL,
+  status      ENUM('available','sold','rented') NOT NULL DEFAULT 'available',
+  image_url   VARCHAR(500),
+  seller_id   INT           NOT NULL,
+  created_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE
+);
+

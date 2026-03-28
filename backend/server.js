@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
+const propertyRoutes = require("./routes/propertyRoutes");
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded form data
 
 // ── Routes ──────────────────────────────────
 app.use("/api/auth", authRoutes);
+app.use("/api/properties", propertyRoutes);
 
 // Health check route
 app.get("/", (req, res) => {

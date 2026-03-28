@@ -1,8 +1,14 @@
 import { useState, useEffect } from "react";
 import { apiFetch } from "../utils/api";
 import Navbar from "../components/Navbar";
+import SellerDashboard from "./SellerDashboard";  
+import MyProperties from "./MyProperties";         
+import AddProperty from "./AddProperty";           
+import EditProperty from "./EditProperty";         
 
-export default function Dashboard({ user, setPage, onLogout }) {
+export default function Dashboard({ user, setPage: setRootPage, onLogout, showToast }) {
+  const [innerPage, setInnerPage] = useState("main");
+  const [editTarget, setEditTarget] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState("");
@@ -10,7 +16,6 @@ export default function Dashboard({ user, setPage, onLogout }) {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        // http://localhost:5000/api/auth/me
         const data = await apiFetch("/auth/me");
         setProfile(data.user);
       } catch (err) {
@@ -22,18 +27,32 @@ export default function Dashboard({ user, setPage, onLogout }) {
     loadProfile();
   }, []);
 
+  if (user?.role === "seller") {
+    if (innerPage === "sellerDashboard" || innerPage === "main") {
+      return <SellerDashboard user={user} setPage={setInnerPage} onLogout={onLogout} />;
+    }
+    if (innerPage === "myProperties") {
+      return <MyProperties setPage={setInnerPage} setEditTarget={setEditTarget} showToast={showToast} />;
+    }
+    if (innerPage === "addProperty") {
+      return <AddProperty setPage={setInnerPage} showToast={showToast} />;
+    }
+    if (innerPage === "editProperty") {
+      return <EditProperty property={editTarget} setPage={setInnerPage} showToast={showToast} />;
+    }
+  }
+
   const initials = user?.name?.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2) || "U";
-  const joinDate = profile?.created_at 
-    ? new Date(profile.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) 
+  const joinDate = profile?.created_at
+    ? new Date(profile.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
     : "—";
-  
   const roleColor = { admin: "#7c3aed", buyer: "#2563eb", seller: "#059669" }[profile?.role] || "#2563eb";
   const token = localStorage.getItem("token");
 
   return (
     <div className="dashboard">
-      <Navbar page="dashboard" setPage={setPage} user={user} onLogout={onLogout} />
-      
+      <Navbar page="dashboard" setPage={setRootPage} user={user} onLogout={onLogout} />
+
       <div className="dash-header">
         <h2 className="dash-welcome">Welcome back, {user?.name?.split(" ")[0]} 👋</h2>
         <p className="dash-sub">Account authenticated via JWT.</p>
@@ -57,7 +76,7 @@ export default function Dashboard({ user, setPage, onLogout }) {
         </div>
 
         {loading && <p className="loading-text">⏳ Fetching profile from API...</p>}
-        
+
         {apiError && (
           <div className="alert alert-error">
             ⚠️ API error: {apiError}. (Check if backend is running on port 5000)
@@ -77,7 +96,6 @@ export default function Dashboard({ user, setPage, onLogout }) {
                 </span>
               </div>
             </div>
-
             <div className="profile-details">
               {[
                 ["User ID", `#${profile.id}`],
