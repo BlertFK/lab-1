@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 
-export default function Navbar({ page, setPage }) {
+export default function Navbar({ page, setPage, user, onLogout }) {
   const [scrolled, setScrolled] = useState(false);
 
-  // Adds a shadow when the user scrolls down
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
@@ -23,15 +22,15 @@ export default function Navbar({ page, setPage }) {
 
         {/* Middle: Navigation */}
         <div className="nav-menu">
-          <button 
-            className={`nav-link ${page === "home" ? "active" : ""}`} 
+          <button
+            className={`nav-link ${page === "home" ? "active" : ""}`}
             onClick={() => setPage("home")}
           >
             Home
           </button>
-          <button 
-            className="nav-link" 
-            onClick={() => document.getElementById("properties")?.scrollIntoView({ behavior: "smooth" })}
+          <button
+            className={`nav-link ${page === "properties" || page === "propertyDetails" ? "active" : ""}`}
+            onClick={() => setPage("properties")}
           >
             Properties
           </button>
@@ -39,12 +38,25 @@ export default function Navbar({ page, setPage }) {
 
         {/* Right: Auth Buttons */}
         <div className="nav-auth">
-          <button className="btn-secondary" onClick={() => setPage("login")}>
-            Sign In
-          </button>
-          <button className="btn-primary" onClick={() => setPage("register")}>
-            Get Started
-          </button>
+          {user ? (
+            <>
+              <button className="btn-secondary" onClick={() => setPage(user.role === "admin" ? "admin" : "dashboard")}>
+                Dashboard
+              </button>
+              <button className="btn-primary" onClick={onLogout}>
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <button className="btn-secondary" onClick={() => setPage("login")}>
+                Sign In
+              </button>
+              <button className="btn-primary" onClick={() => setPage("register")}>
+                Get Started
+              </button>
+            </>
+          )}
         </div>
       </div>
     </nav>

@@ -9,20 +9,27 @@ import Home from "./pages/Home";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
-import AdminDashboard from "./pages/AdminDashboard"; // ← SHTO KËTË
+import AdminDashboard from "./pages/AdminDashboard";
+import PropertiesPage from "./pages/PropertiesPage";
+import PropertyDetails from "./pages/PropertyDetails";
 
 export default function App() {
   const [page, setPage] = useState("home");
+  const [selectedProperty, setSelectedProperty] = useState(null);
+
   const [user, setUser] = useState(() => {
     try { return JSON.parse(localStorage.getItem("user")); } catch { return null; }
   });
+
   const [toast, setToast] = useState(null);
+
   const showToast = useCallback((message, type = "success") => setToast({ message, type }), []);
+
   const handleLoginSuccess = useCallback((userData) => {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
     showToast(`Welcome back, ${userData.name}!`, "success");
-    setPage(userData.role === "admin" ? "admin" : "dashboard"); // ← NDRYSHO KËTË
+    setPage(userData.role === "admin" ? "admin" : "dashboard");
   }, [showToast]);
 
   const handleLogout = useCallback(() => {
@@ -33,20 +40,66 @@ export default function App() {
     setPage("home");
   }, [showToast]);
 
+  const showNavbar = page === "home" || page === "properties" || page === "propertyDetails" || (!user && page === "dashboard");
+
   return (
     <>
-      {page === "login" && <LoginPage setPage={setPage} onLoginSuccess={handleLoginSuccess} />}
-      {page === "register" && <RegisterPage setPage={setPage} showToast={showToast} />}
-      {page === "admin" && user?.role === "admin" && <AdminDashboard onLogout={handleLogout} />}
-      {page === "dashboard" && user && <Dashboard user={user} setPage={setPage} onLogout={handleLogout} showToast={showToast} />}
-      {(page === "home" || (!user && page === "dashboard")) && (
+      {/* Navbar - shfaqet ne faqet publike */}
+      {showNavbar && (
+        <Navbar page={page} setPage={setPage} user={user} onLogout={handleLogout} />
+      )}
+
+      {/* Auth pages */}
+      {page === "login" && (
+        <LoginPage setPage={setPage} onLoginSuccess={handleLoginSuccess} />
+      )}
+      {page === "register" && (
+        <RegisterPage setPage={setPage} showToast={showToast} />
+      )}
+
+      {/* Admin */}
+      {page === "admin" && user?.role === "admin" && (
+        <AdminDashboard onLogout={handleLogout} />
+      )}
+
+      {/* Seller/Buyer dashboard */}
+      {page === "dashboard" && user && (
+        <Dashboard user={user} setPage={setPage} onLogout={handleLogout} showToast={showToast} />
+      )}
+
+      {/* Home */}
+      {page === "home" && (
         <>
-          <Navbar page={page} setPage={setPage} user={user} onLogout={handleLogout} />
           <Home setPage={setPage} user={user} />
           <Footer />
         </>
       )}
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+
+      {/* Properties list — Member 2 */}
+      {page === "properties" && (
+        <>
+          <PropertiesPage setPage={setPage} setSelectedProperty={setSelectedProperty} />
+          <Footer />
+        </>
+      )}
+
+      {/* Property details — Member 2 */}
+      {page === "propertyDetails" && (
+        <PropertyDetails property={selectedProperty} setPage={setPage} />
+      )}
+
+      {/* Redirect ne home nese jo i loguar dhe mundohet te hype ne dashboard */}
+      {!user && page === "dashboard" && (
+        <>
+          <Home setPage={setPage} user={user} />
+          <Footer />
+        </>
+      )}
+
+      {/* Toast notifications */}
+      {toast && (
+        <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
+      )}
     </>
   );
 }

@@ -168,8 +168,7 @@ export default function AdminDashboard({ onLogout }) {
     if (res.ok) { setProperties((p) => p.filter((x) => x.id !== id)); showMsg("U fshi!"); }
     else showMsg("Gabim gjate fshirjes", "error");
   };
-
-  // ── BADGES ────────────────────────────────
+  
   const roleBadge = (role) => {
     const c = { admin: ["#fef3c7","#92400e","#fcd34d"], seller: ["#dbeafe","#1e40af","#93c5fd"], buyer: ["#d1fae5","#065f46","#6ee7b7"] };
     const [bg, color, border] = c[role] || c.buyer;
