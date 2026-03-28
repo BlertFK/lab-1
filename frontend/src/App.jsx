@@ -195,7 +195,7 @@ export default function App() {
 
       {/* Property details — Member 2 */}
       {page === "propertyDetails" && (
-        <PropertyDetails property={selectedProperty} setPage={setPage} />
+        <PropertyDetails property={selectedProperty} setPage={setPage} user={user} />
       )}
 
       {/* Redirect ne home nese jo i loguar dhe mundohet te hype ne dashboard */}

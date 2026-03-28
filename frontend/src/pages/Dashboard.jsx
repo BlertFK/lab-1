@@ -8,6 +8,7 @@ import EditProperty from "./EditProperty";
 import BuyerDashboard from "./BuyerDashboard";
 import FavoritesPage from "./FavoritesPage";
 import BuyerProfilePage from "./BuyerProfilePage";
+import SellerMessagesPage from "./SellerMessagesPage";
 
 export default function Dashboard({ user, setPage: setRootPage, onLogout, showToast }) {
   const [innerPage, setInnerPage] = useState(() => localStorage.getItem("dashboardView") || "main");
@@ -52,6 +53,9 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
     if (innerPage === "editProperty") {
       return <EditProperty property={editTarget} setPage={setInnerPage} showToast={showToast} />;
     }
+    if (innerPage === "sellerMessages") {
+      return <SellerMessagesPage user={user} setPage={setInnerPage} setRootPage={setRootPage} onLogout={onLogout} showToast={showToast}/>;
+}
   }
 
   if (user?.role === "buyer") {

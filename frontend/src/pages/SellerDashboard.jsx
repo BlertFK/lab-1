@@ -1,18 +1,26 @@
-export default function SellerDashboard({ user, setPage, onLogout }) {
+export default function SellerDashboard({ user, setPage, setRootPage, onLogout }) {
   const actions = [
-    { icon: "🏠", label: "My Properties",  sub: "View and manage your listings",  page: "myProperties"  },
-    { icon: "➕", label: "Add Property",    sub: "Create a new listing",           page: "addProperty"   },
+    { icon: "🏠", label: "My Properties",  sub: "View and manage your listings",  page: "myProperties"   },
+    { icon: "➕", label: "Add Property",    sub: "Create a new listing",           page: "addProperty"    },
+    { icon: "✉️", label: "Messages",        sub: "View buyer inquiries",           page: "sellerMessages" },
   ];
 
   return (
     <div className="dashboard">
       <div className="dash-header">
+        <div className="dashboard-brand-row">
+          <div className="dashboard-brand" onClick={() => setRootPage && setRootPage("home")}>
+            <div className="brand-logo"><div className="logo-dot" /></div>
+            <span className="brand-name">UrbanKeys</span>
+          </div>
+          <button className="btn-ghost" onClick={() => setRootPage && setRootPage("home")}>Home</button>
+        </div>
         <h2 className="dash-welcome">Seller Dashboard 👋</h2>
         <p className="dash-sub">Welcome back, {user?.name?.split(" ")[0]}. Manage your properties below.</p>
       </div>
 
       <div className="dash-body">
-        <div className="dash-cards" style={{ maxWidth: 600 }}>
+        <div className="dash-cards" style={{ maxWidth: 700 }}>
           {actions.map(a => (
             <div key={a.page} className="dash-card seller-action-card" onClick={() => setPage(a.page)}
               style={{ cursor: "pointer" }}>

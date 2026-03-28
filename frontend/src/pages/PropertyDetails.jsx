@@ -1,16 +1,22 @@
 import { useState, useEffect } from "react";
+import { apiFetch } from "../utils/api";
 
-const API = "http://localhost:5000/api";
 const DEFAULT_IMG = "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=80";
 
-export default function PropertyDetails({ property, setPage }) {
+export default function PropertyDetails({ property, setPage, user }) {
   const [details, setDetails] = useState(property || null);
   const [loading, setLoading] = useState(!property);
+
+  const [showForm, setShowForm] = useState(false);
+  const [message, setMessage] = useState("");
+  const [sending, setSending] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
 
   useEffect(() => {
     if (property?.id) {
       setLoading(true);
-      fetch(`${API}/properties/${property.id}`)
+      fetch(`http://localhost:5000/api/properties/${property.id}`)
         .then((r) => r.json())
         .then((data) => { setDetails(data.property); setLoading(false); })
         .catch(() => setLoading(false));
@@ -19,8 +25,33 @@ export default function PropertyDetails({ property, setPage }) {
 
   const statusColor = {
     available: { bg: "#d1fae5", color: "#065f46" },
-    sold: { bg: "#fee2e2", color: "#991b1b" },
-    rented: { bg: "#ede9fe", color: "#5b21b6" },
+    sold:      { bg: "#fee2e2", color: "#991b1b" },
+    rented:    { bg: "#ede9fe", color: "#5b21b6" },
+  };
+
+  const handleSendMessage = async () => {
+    setFormError("");
+    setFormSuccess("");
+
+    if (!message.trim()) {
+      setFormError("Please enter a message before sending.");
+      return;
+    }
+
+    setSending(true);
+    try {
+      await apiFetch("/messages", {
+        method: "POST",
+        body: JSON.stringify({ property_id: details.id, message: message.trim() }),
+      });
+      setFormSuccess("Your message was sent successfully! The seller will get back to you.");
+      setMessage("");
+      setShowForm(false);
+    } catch (err) {
+      setFormError(err.message || "Failed to send message. Please try again.");
+    } finally {
+      setSending(false);
+    }
   };
 
   if (loading) return (
@@ -42,11 +73,11 @@ export default function PropertyDetails({ property, setPage }) {
   );
 
   const sc = statusColor[details.status] || statusColor.available;
+  const isBuyer = user?.role === "buyer";
 
   return (
     <div style={{ minHeight: "100vh", background: "#f8fafc", fontFamily: "'Segoe UI', sans-serif" }}>
 
-      {/* Back button */}
       <div style={{ maxWidth: 1000, margin: "0 auto", padding: "24px 40px 0" }}>
         <button onClick={() => setPage("properties")}
           style={{ background: "none", border: "none", color: "#2563eb", fontWeight: 600, fontSize: 14, cursor: "pointer", padding: 0 }}>
@@ -56,7 +87,6 @@ export default function PropertyDetails({ property, setPage }) {
 
       <div style={{ maxWidth: 1000, margin: "0 auto", padding: "20px 40px 60px" }}>
 
-        {/* Image */}
         <div style={{ borderRadius: 16, overflow: "hidden", marginBottom: 28, height: 420 }}>
           <img
             src={details.image_url || DEFAULT_IMG}
@@ -103,28 +133,83 @@ export default function PropertyDetails({ property, setPage }) {
             </div>
           </div>
 
-          {/* Right — Price + Seller */}
+          {/* Right — Price + Contact + Seller */}
           <div>
             <div style={{ background: "white", borderRadius: 16, padding: 24, border: "1px solid #e2e8f0", boxShadow: "0 4px 16px rgba(0,0,0,0.06)", marginBottom: 20 }}>
               <p style={{ margin: "0 0 4px", fontSize: 13, color: "#94a3b8", fontWeight: 600 }}>CMIMI</p>
               <p style={{ margin: "0 0 20px", fontSize: 32, fontWeight: 700, color: "#2563eb" }}>
                 Euro {Number(details.price).toLocaleString()}
               </p>
-              <button style={{ width: "100%", padding: "12px 0", background: "#2563eb", color: "white", border: "none", borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: "pointer", marginBottom: 10 }}
-                onMouseEnter={(e) => (e.target.style.background = "#1d4ed8")}
-                onMouseLeave={(e) => (e.target.style.background = "#2563eb")}
-                onClick={() => setPage && setPage("dashboard")}
-              >
-                Kontakto Shitesin
-              </button>
-              <button style={{ width: "100%", padding: "12px 0", background: "white", color: "#2563eb", border: "1px solid #2563eb", borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: "pointer" }}
+
+              {isBuyer ? (
+                <>
+                  {!showForm ? (
+                    <button
+                      style={{ width: "100%", padding: "12px 0", background: "#2563eb", color: "white", border: "none", borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: "pointer", marginBottom: 10 }}
+                      onMouseEnter={(e) => (e.target.style.background = "#1d4ed8")}
+                      onMouseLeave={(e) => (e.target.style.background = "#2563eb")}
+                      onClick={() => { setShowForm(true); setFormError(""); setFormSuccess(""); }}
+                    >
+                      ✉️ Kontakto Shitesin
+                    </button>
+                  ) : (
+                    <div style={{ marginBottom: 10 }}>
+                      <p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600, color: "#1e293b" }}>
+                        Dërgoni mesazh shitësit:
+                      </p>
+                      <textarea
+                        rows={4}
+                        placeholder="Shkruani mesazhin tuaj këtu..."
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        style={{ width: "100%", padding: "10px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 14, fontFamily: "'Segoe UI', sans-serif", resize: "vertical", boxSizing: "border-box", outline: "none" }}
+                      />
+                      {formError && (
+                        <p style={{ margin: "6px 0 0", fontSize: 13, color: "#dc2626" }}>{formError}</p>
+                      )}
+                      <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                        <button
+                          disabled={sending}
+                          onClick={handleSendMessage}
+                          style={{ flex: 1, padding: "10px 0", background: sending ? "#93c5fd" : "#2563eb", color: "white", border: "none", borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: sending ? "not-allowed" : "pointer" }}
+                        >
+                          {sending ? "Duke dërguar..." : "Dërgo"}
+                        </button>
+                        <button
+                          onClick={() => { setShowForm(false); setFormError(""); setMessage(""); }}
+                          style={{ flex: 1, padding: "10px 0", background: "white", color: "#64748b", border: "1px solid #cbd5e1", borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: "pointer" }}
+                        >
+                          Anulo
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {formSuccess && (
+                    <p style={{ margin: "6px 0 10px", fontSize: 13, color: "#059669", background: "#d1fae5", padding: "8px 12px", borderRadius: 8 }}>
+                      ✓ {formSuccess}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <button
+                  style={{ width: "100%", padding: "12px 0", background: "#2563eb", color: "white", border: "none", borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: "pointer", marginBottom: 10 }}
+                  onMouseEnter={(e) => (e.target.style.background = "#1d4ed8")}
+                  onMouseLeave={(e) => (e.target.style.background = "#2563eb")}
+                  onClick={() => setPage && setPage(user ? "dashboard" : "login")}
+                >
+                  Kontakto Shitesin
+                </button>
+              )}
+
+              <button
+                style={{ width: "100%", padding: "12px 0", background: "white", color: "#2563eb", border: "1px solid #2563eb", borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: "pointer" }}
                 onClick={() => setPage("properties")}
               >
                 Kthehu te Lista
               </button>
             </div>
 
-            {/* Seller info */}
             {details.seller_name && (
               <div style={{ background: "white", borderRadius: 16, padding: 24, border: "1px solid #e2e8f0" }}>
                 <h3 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b" }}>Shitesi</h3>
