@@ -24,7 +24,7 @@ const Modal = ({ title, onClose, onSave, saving, children }) => (
     <div style={{ background: "white", borderRadius: 16, padding: 32, width: 460, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 60px rgba(0,0,0,0.25)" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
         <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#1e293b" }}>{title}</h2>
-        <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer", color: "#94a3b8" }}>×</button>
+        <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer", color: "#94a3b8" }}>x</button>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>{children}</div>
       <div style={{ display: "flex", gap: 12, marginTop: 24 }}>
@@ -37,7 +37,7 @@ const Modal = ({ title, onClose, onSave, saving, children }) => (
   </div>
 );
 
-export default function AdminDashboard() {
+export default function AdminDashboard({ onLogout }) {
   const [tab, setTab] = useState("users");
   const [users, setUsers] = useState([]);
   const [properties, setProperties] = useState([]);
@@ -50,7 +50,7 @@ export default function AdminDashboard() {
   const [userForm, setUserForm] = useState({ name: "", email: "", password: "", role: "buyer" });
   const [userLoading, setUserLoading] = useState(false);
 
-  // Property modal
+  // Property modal (vetem edit)
   const [propModal, setPropModal] = useState(false);
   const [editProp, setEditProp] = useState(null);
   const [propForm, setPropForm] = useState({ title: "", description: "", price: "", location: "", type: "", status: "available", image_url: "" });
@@ -134,13 +134,7 @@ export default function AdminDashboard() {
     else showMsg("Gabim gjate fshirjes", "error");
   };
 
-  // ── PROPERTY CRUD ──────────────────────────
-  const openAddProp = () => {
-    setEditProp(null);
-    setPropForm({ title: "", description: "", price: "", location: "", type: "", status: "available", image_url: "" });
-    setPropModal(true);
-  };
-
+  // ── PROPERTY — vetem edit dhe delete ──────
   const openEditProp = (p) => {
     setEditProp(p);
     setPropForm({ title: p.title, description: p.description || "", price: p.price, location: p.location, type: p.type, status: p.status, image_url: p.image_url || "" });
@@ -153,19 +147,12 @@ export default function AdminDashboard() {
     }
     setPropLoading(true);
     try {
-      let res;
-      if (editProp) {
-        res = await fetch(`${API}/admin/properties/${editProp.id}`, {
-          method: "PUT", headers: getHeaders(), body: JSON.stringify(propForm),
-        });
-      } else {
-        res = await fetch(`${API}/properties`, {
-          method: "POST", headers: getHeaders(), body: JSON.stringify(propForm),
-        });
-      }
+      const res = await fetch(`${API}/admin/properties/${editProp.id}`, {
+        method: "PUT", headers: getHeaders(), body: JSON.stringify(propForm),
+      });
       const data = await res.json();
       if (res.ok) {
-        showMsg(editProp ? "Prona u perditesua!" : "Prona u shtua!");
+        showMsg("Prona u perditesua!");
         setPropModal(false);
         fetchProperties();
       } else {
@@ -205,7 +192,7 @@ export default function AdminDashboard() {
             <div style={{ fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", opacity: 0.7, marginBottom: 4 }}>RentEase Platform</div>
             <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>Admin Dashboard</h1>
           </div>
-          <div style={{ display: "flex", gap: 16 }}>
+          <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
             <div style={{ textAlign: "center", background: "rgba(255,255,255,0.15)", borderRadius: 12, padding: "10px 20px" }}>
               <div style={{ fontSize: 22, fontWeight: 700 }}>{users.length}</div>
               <div style={{ fontSize: 11, opacity: 0.8 }}>Perdorues</div>
@@ -214,6 +201,9 @@ export default function AdminDashboard() {
               <div style={{ fontSize: 22, fontWeight: 700 }}>{properties.length}</div>
               <div style={{ fontSize: 11, opacity: 0.8 }}>Prona</div>
             </div>
+            <button onClick={onLogout} style={{ padding: "10px 20px", background: "rgba(255,255,255,0.15)", color: "white", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
+              Dil
+            </button>
           </div>
         </div>
       </div>
@@ -221,13 +211,13 @@ export default function AdminDashboard() {
       {/* Toast */}
       {message && (
         <div style={{ position: "fixed", top: 24, right: 24, zIndex: 1000, background: message.type === "error" ? "#fee2e2" : "#d1fae5", color: message.type === "error" ? "#991b1b" : "#065f46", border: `1px solid ${message.type === "error" ? "#fca5a5" : "#6ee7b7"}`, borderRadius: 10, padding: "12px 20px", fontWeight: 600, fontSize: 14, boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}>
-          {message.type === "error" ? "Error: " : "OK: "}{message.text}
+          {message.text}
         </div>
       )}
 
       {/* User Modal */}
       {userModal && (
-        <Modal title={editUser ? "Ndrysho Perdoruesin" : "➕ Shto Perdorues"} onClose={() => setUserModal(false)} onSave={saveUser} saving={userLoading}>
+        <Modal title={editUser ? "Ndrysho Perdoruesin" : "Shto Perdorues"} onClose={() => setUserModal(false)} onSave={saveUser} saving={userLoading}>
           <div><label style={labelStyle}>Emri *</label><input style={inputStyle} placeholder="Arta Krasniqi" value={userForm.name} onChange={(e) => setUserForm({ ...userForm, name: e.target.value })} /></div>
           <div><label style={labelStyle}>Email *</label><input style={inputStyle} type="email" placeholder="arta@email.com" value={userForm.email} onChange={(e) => setUserForm({ ...userForm, email: e.target.value })} /></div>
           <div><label style={labelStyle}>Fjalekalimi {editUser ? "(ler bosh per te mos ndryshuar)" : "*"}</label><input style={inputStyle} type="password" placeholder="Min. 6 karaktere" value={userForm.password} onChange={(e) => setUserForm({ ...userForm, password: e.target.value })} /></div>
@@ -242,14 +232,14 @@ export default function AdminDashboard() {
         </Modal>
       )}
 
-      {/* Property Modal */}
+      {/* Property Modal - vetem edit */}
       {propModal && (
-        <Modal title={editProp ? "Ndrysho Pronen" : "Shto Prone"} onClose={() => setPropModal(false)} onSave={saveProp} saving={propLoading}>
-          <div><label style={labelStyle}>Titulli *</label><input style={inputStyle} placeholder="Apartament 2+1 ne Prishtine" value={propForm.title} onChange={(e) => setPropForm({ ...propForm, title: e.target.value })} /></div>
+        <Modal title="Ndrysho Pronen" onClose={() => setPropModal(false)} onSave={saveProp} saving={propLoading}>
+          <div><label style={labelStyle}>Titulli *</label><input style={inputStyle} placeholder="Apartament 2+1" value={propForm.title} onChange={(e) => setPropForm({ ...propForm, title: e.target.value })} /></div>
           <div><label style={labelStyle}>Pershkrimi</label><textarea style={{ ...inputStyle, height: 80, resize: "vertical" }} placeholder="Pershkrim i prones..." value={propForm.description} onChange={(e) => setPropForm({ ...propForm, description: e.target.value })} /></div>
-          <div><label style={labelStyle}>Cmimi (€) *</label><input style={inputStyle} type="number" placeholder="85000" value={propForm.price} onChange={(e) => setPropForm({ ...propForm, price: e.target.value })} /></div>
+          <div><label style={labelStyle}>Cmimi (Euro) *</label><input style={inputStyle} type="number" placeholder="85000" value={propForm.price} onChange={(e) => setPropForm({ ...propForm, price: e.target.value })} /></div>
           <div><label style={labelStyle}>Lokacioni *</label><input style={inputStyle} placeholder="Prishtine" value={propForm.location} onChange={(e) => setPropForm({ ...propForm, location: e.target.value })} /></div>
-          <div><label style={labelStyle}>Tipi</label><input style={inputStyle} placeholder="Apartament / Shtepi / Zyre" value={propForm.type} onChange={(e) => setPropForm({ ...propForm, type: e.target.value })} /></div>
+          <div><label style={labelStyle}>Tipi</label><input style={inputStyle} placeholder="Apartament / Shtepie / Zyre" value={propForm.type} onChange={(e) => setPropForm({ ...propForm, type: e.target.value })} /></div>
           <div>
             <label style={labelStyle}>Statusi</label>
             <select style={{ ...inputStyle, background: "white" }} value={propForm.status} onChange={(e) => setPropForm({ ...propForm, status: e.target.value })}>
@@ -264,7 +254,7 @@ export default function AdminDashboard() {
 
       <div style={{ maxWidth: 1150, margin: "0 auto", padding: "32px 40px" }}>
 
-        {/* Tabs + Buton Shto */}
+        {/* Tabs */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
           <div style={{ display: "flex", gap: 4, background: "#e2e8f0", borderRadius: 12, padding: 4 }}>
             {["users", "properties"].map((t) => (
@@ -273,16 +263,17 @@ export default function AdminDashboard() {
               </button>
             ))}
           </div>
-          <button onClick={tab === "users" ? openAddUser : openAddProp} style={{ padding: "10px 24px", background: "#2563eb", color: "white", border: "none", borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: "pointer", boxShadow: "0 2px 8px rgba(37,99,235,0.3)" }}>
-            ➕ {tab === "users" ? "Shto Perdorues" : "Shto Prone"}
-          </button>
+          {tab === "users" && (
+            <button onClick={openAddUser} style={{ padding: "10px 24px", background: "#2563eb", color: "white", border: "none", borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: "pointer", boxShadow: "0 2px 8px rgba(37,99,235,0.3)" }}>
+              Shto Perdorues
+            </button>
+          )}
         </div>
 
         {/* Table */}
         <div style={{ background: "white", borderRadius: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)", overflow: "hidden", border: "1px solid #e2e8f0" }}>
           {loading ? (
             <div style={{ textAlign: "center", padding: "60px 0", color: "#94a3b8" }}>
-              <div style={{ fontSize: 32, marginBottom: 12 }}></div>
               <div style={{ fontWeight: 500 }}>Duke ngarkuar...</div>
             </div>
           ) : tab === "users" ? (
@@ -342,7 +333,7 @@ export default function AdminDashboard() {
                     <td style={{ padding: "14px 20px", fontWeight: 600, color: "#1e293b", maxWidth: 160 }}>
                       <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.title}</div>
                     </td>
-                    <td style={{ padding: "14px 20px", color: "#2563eb", fontWeight: 700 }}>€{Number(p.price).toLocaleString()}</td>
+                    <td style={{ padding: "14px 20px", color: "#2563eb", fontWeight: 700 }}>Euro {Number(p.price).toLocaleString()}</td>
                     <td style={{ padding: "14px 20px", color: "#475569", fontSize: 14 }}>{p.location}</td>
                     <td style={{ padding: "14px 20px", color: "#475569", fontSize: 14 }}>{p.type}</td>
                     <td style={{ padding: "14px 20px" }}>{statusBadge(p.status)}</td>
