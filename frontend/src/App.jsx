@@ -1,4 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+
+import { apiFetch } from "./utils/api";
 
 import "./styles/style.css";
 import Navbar from "./components/Navbar";
@@ -13,20 +15,126 @@ import AdminDashboard from "./pages/AdminDashboard";
 import PropertiesPage from "./pages/PropertiesPage";
 import PropertyDetails from "./pages/PropertyDetails";
 
-export default function App() {
-  const [page, setPage] = useState("home");
-  const [selectedProperty, setSelectedProperty] = useState(null);
+const getPageFromPath = (pathname) => {
+  if (pathname === "/login") return "login";
+  if (pathname === "/register") return "register";
+  if (pathname === "/admin") return "admin";
+  if (pathname === "/dashboard") return "dashboard";
+  if (pathname === "/properties") return "properties";
+  if (pathname === "/property-details") return "propertyDetails";
+  return "home";
+};
 
+const getPathFromPage = (page) => {
+  if (page === "login") return "/login";
+  if (page === "register") return "/register";
+  if (page === "admin") return "/admin";
+  if (page === "dashboard") return "/dashboard";
+  if (page === "properties") return "/properties";
+  if (page === "propertyDetails") return "/property-details";
+  return "/";
+};
+
+export default function App() {
+  const [page, setPage] = useState(() => {
+    const pathPage = getPageFromPath(window.location.pathname);
+    const savedUser = localStorage.getItem("user");
+    const savedToken = localStorage.getItem("token");
+    const expiresAt = Number(localStorage.getItem("authExpiresAt") || 0);
+
+    if (savedUser && savedToken && expiresAt > Date.now()) {
+      try {
+        return pathPage;
+      } catch {
+        return pathPage;
+      }
+    }
+
+    return pathPage;
+  });
+  const [selectedProperty, setSelectedProperty] = useState(null);
   const [user, setUser] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("user")); } catch { return null; }
+    const savedToken = localStorage.getItem("token");
+    const savedUser = localStorage.getItem("user");
+    const expiresAt = Number(localStorage.getItem("authExpiresAt") || 0);
+
+    if (!savedToken || !savedUser || expiresAt <= Date.now()) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("authExpiresAt");
+      return null;
+    }
+
+    try {
+      return JSON.parse(savedUser);
+    } catch {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      localStorage.removeItem("authExpiresAt");
+      return null;
+    }
   });
 
   const [toast, setToast] = useState(null);
   const showToast = useCallback((message, type = "success") => setToast({ message, type }), []);
 
+  useEffect(() => {
+    const handlePopState = () => {
+      setPage(getPageFromPath(window.location.pathname));
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  useEffect(() => {
+    const restoreSession = async () => {
+      const token = localStorage.getItem("token");
+      const expiresAt = Number(localStorage.getItem("authExpiresAt") || 0);
+
+      if (!token || expiresAt <= Date.now()) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("authExpiresAt");
+        return;
+      }
+
+      try {
+        const data = await apiFetch("/auth/me");
+        const restoredUser = {
+          id: data.user.id,
+          name: data.user.name,
+          email: data.user.email,
+          role: data.user.role,
+          createdAt: data.user.created_at,
+        };
+
+        setUser(restoredUser);
+        localStorage.setItem("user", JSON.stringify(restoredUser));
+        setPage(restoredUser.role === "admin" ? "admin" : "dashboard");
+      } catch {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("authExpiresAt");
+        setUser(null);
+        setPage("home");
+      }
+    };
+
+    restoreSession();
+  }, []);
+
+  useEffect(() => {
+    const nextPath = getPathFromPage(page);
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState({}, "", nextPath);
+    }
+  }, [page]);
+
   const handleLoginSuccess = useCallback((userData) => {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("authExpiresAt", String(Date.now() + 7 * 24 * 60 * 60 * 1000));
     showToast(`Welcome back, ${userData.name}!`, "success");
     setPage(userData.role === "admin" ? "admin" : "dashboard");
   }, [showToast]);
@@ -35,6 +143,8 @@ export default function App() {
     setUser(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("authExpiresAt");
+    localStorage.removeItem("dashboardView");
     showToast("You've been signed out.", "success");
     setPage("home");
   }, [showToast]);
@@ -61,7 +171,7 @@ export default function App() {
       )}
       {page === "home" && (
         <>
-          <Home setPage={setPage} user={user} />
+          <Home setPage={setPage} user={user} showToast={showToast} />
           <Footer />
         </>
       )}
@@ -72,11 +182,11 @@ export default function App() {
         </>
       )}
       {page === "propertyDetails" && (
-        <PropertyDetails property={selectedProperty} setPage={setPage} />
+        <PropertyDetails property={selectedProperty} setPage={setPage} user={user} />
       )}
       {!user && page === "dashboard" && (
         <>
-          <Home setPage={setPage} user={user} />
+          <Home setPage={setPage} user={user} showToast={showToast} />
           <Footer />
         </>
       )}

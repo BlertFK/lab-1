@@ -17,6 +17,7 @@ export default function LoginPage({ setPage, onLoginSuccess }) {
                 body: JSON.stringify({ email: form.email, password: form.password }),
             });
             localStorage.setItem("token", data.token);       // store JWT
+            localStorage.setItem("authExpiresAt", String(Date.now() + 7 * 24 * 60 * 60 * 1000));
             onLoginSuccess(data.user);                        // update App state
         } catch (err) {
             setError(err.message);

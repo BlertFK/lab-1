@@ -55,8 +55,10 @@ export default function PropertiesPage({ setPage, setSelectedProperty }) {
 
       {/* Hero */}
       <div style={{ background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%)", padding: "48px 40px 40px", color: "white", textAlign: "center" }}>
-        <h1 style={{ margin: "0 0 8px", fontSize: 34, fontWeight: 700 }}>Find Your Perfect Property</h1>
-        <p style={{ margin: "0 0 32px", opacity: 0.8, fontSize: 16 }}>Search through our listings</p>
+        <h1 style={{ margin: "0 0 8px", fontSize: 34, fontWeight: 700 }}>Gjej Pronen Perfekte</h1>
+        <p style={{ margin: "0 0 32px", opacity: 0.8, fontSize: 16 }}>Kerko ne listen tone te pronave</p>
+
+        {/* Search bar */}
         <form onSubmit={handleSearch} style={{ display: "flex", gap: 8, maxWidth: 600, margin: "0 auto" }}>
           <input
             value={search}

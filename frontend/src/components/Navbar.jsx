@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { FaHeart } from "react-icons/fa";
 
 export default function Navbar({ page, setPage, user, onLogout }) {
   const [scrolled, setScrolled] = useState(false);
@@ -8,6 +9,16 @@ export default function Navbar({ page, setPage, user, onLogout }) {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const openDashboard = () => {
+    localStorage.removeItem("dashboardView");
+    setPage(user.role === "admin" ? "admin" : "dashboard");
+  };
+
+  const openFavorites = () => {
+    localStorage.setItem("dashboardView", "favorites");
+    setPage("dashboard");
+  };
 
   return (
     <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
@@ -40,7 +51,12 @@ export default function Navbar({ page, setPage, user, onLogout }) {
         <div className="nav-auth">
           {user ? (
             <>
-              <button className="btn-secondary" onClick={() => setPage(user.role === "admin" ? "admin" : "dashboard")}>
+              {user.role === "buyer" && (
+                <button className="nav-icon-btn" onClick={openFavorites} aria-label="My favorites" title="My favorites">
+                  <FaHeart />
+                </button>
+              )}
+              <button className="btn-secondary" onClick={openDashboard}>
                 Dashboard
               </button>
               <button className="btn-primary" onClick={onLogout}>
