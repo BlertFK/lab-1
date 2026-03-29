@@ -1,10 +1,97 @@
 import { useState, useEffect } from "react";
 import { apiFetch } from "../utils/api";
 import Navbar from "../components/Navbar";
-import SellerDashboard from "./SellerDashboard";  
-import MyProperties from "./MyProperties";         
-import AddProperty from "./AddProperty";           
-import EditProperty from "./EditProperty";         
+import SellerDashboard from "./SellerDashboard";
+import MyProperties from "./MyProperties";
+import AddProperty from "./AddProperty";
+import EditProperty from "./EditProperty";
+
+// ── Placeholder components (Member 4 do t'i implementoje) ────
+const BuyerDashboard = ({ user, setPage, setRootPage, onLogout }) => (
+  <div className="dashboard">
+    <div className="dash-header">
+      <div onClick={() => setRootPage("home")} style={{ fontSize: 20, fontWeight: 800, color: "#2563eb", cursor: "pointer", marginBottom: 8, display: "inline-block" }}>UrbanKeys</div>
+      <h2 className="dash-welcome">Welcome back, {user?.name?.split(" ")[0]} 👋</h2>
+      <p className="dash-sub">Browse properties, save favorites and contact sellers.</p>
+    </div>
+    <div className="dash-body">
+      <div className="dash-cards" style={{ maxWidth: 600 }}>
+        {[
+          { icon: "❤️", label: "My Favorites", sub: "View saved properties", page: "favorites" },
+          { icon: "👤", label: "My Profile",   sub: "View your account info", page: "profile" },
+        ].map(a => (
+          <div key={a.page} className="dash-card seller-action-card" onClick={() => setPage(a.page)} style={{ cursor: "pointer" }}>
+            <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>{a.icon}</div>
+            <div className="dash-card-label" style={{ fontSize: "0.95rem", fontWeight: 600, textTransform: "none", color: "var(--text)" }}>{a.label}</div>
+            <div className="dash-card-label" style={{ marginBottom: 0 }}>{a.sub}</div>
+          </div>
+        ))}
+      </div>
+      <div className="profile-card" style={{ marginTop: "2rem", maxWidth: 420 }}>
+        <p className="profile-card-title">Account</p>
+        <div className="profile-top">
+          <div className="profile-avatar">{user?.name?.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2)}</div>
+          <div>
+            <p className="profile-name">{user?.name}</p>
+            <p className="profile-email">{user?.email}</p>
+            <span className="profile-role-badge" style={{ background: "#2563eb18", color: "#2563eb" }}>buyer</span>
+          </div>
+        </div>
+        <button className="btn-submit" style={{ background: "var(--error)" }} onClick={onLogout}>Sign Out</button>
+      </div>
+    </div>
+  </div>
+);
+
+const FavoritesPage = ({ setPage, setRootPage, onLogout }) => (
+  <div className="dashboard">
+    <div className="dash-header">
+      <div onClick={() => setRootPage("home")} style={{ fontSize: 20, fontWeight: 800, color: "#2563eb", cursor: "pointer", marginBottom: 8, display: "inline-block" }}>UrbanKeys</div>
+      <h2 className="dash-welcome">My Favorites</h2>
+      <p className="dash-sub">Your saved properties will appear here.</p>
+    </div>
+    <div className="dash-body">
+      <button className="btn-submit" style={{ maxWidth: 200 }} onClick={() => setPage("main")}>← Back to Dashboard</button>
+    </div>
+  </div>
+);
+
+const BuyerProfilePage = ({ user, setPage, setRootPage, onLogout }) => (
+  <div className="dashboard">
+    <div className="dash-header">
+      <div onClick={() => setRootPage("home")} style={{ fontSize: 20, fontWeight: 800, color: "#2563eb", cursor: "pointer", marginBottom: 8, display: "inline-block" }}>UrbanKeys</div>
+      <h2 className="dash-welcome">My Profile</h2>
+    </div>
+    <div className="dash-body">
+      <div className="profile-card" style={{ maxWidth: 420 }}>
+        <p className="profile-card-title">Account Info</p>
+        <div className="profile-top">
+          <div className="profile-avatar">{user?.name?.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2)}</div>
+          <div>
+            <p className="profile-name">{user?.name}</p>
+            <p className="profile-email">{user?.email}</p>
+            <span className="profile-role-badge" style={{ background: "#2563eb18", color: "#2563eb" }}>buyer</span>
+          </div>
+        </div>
+      </div>
+      <button className="btn-submit" style={{ maxWidth: 200, marginTop: 16 }} onClick={() => setPage("main")}>← Back to Dashboard</button>
+    </div>
+  </div>
+);
+
+const SellerMessagesPage = ({ user, setPage, setRootPage, onLogout }) => (
+  <div className="dashboard">
+    <div className="dash-header">
+      <div onClick={() => setRootPage("home")} style={{ fontSize: 20, fontWeight: 800, color: "#2563eb", cursor: "pointer", marginBottom: 8, display: "inline-block" }}>UrbanKeys</div>
+      <h2 className="dash-welcome">Messages</h2>
+      <p className="dash-sub">Your messages from buyers will appear here.</p>
+    </div>
+    <div className="dash-body">
+      <button className="btn-submit" style={{ maxWidth: 200 }} onClick={() => setPage("main")}>← Back to Dashboard</button>
+    </div>
+  </div>
+);
+// ─────────────────────────────────────────────────────────────
 
 export default function Dashboard({ user, setPage: setRootPage, onLogout, showToast }) {
   const [innerPage, setInnerPage] = useState(() => localStorage.getItem("dashboardView") || "main");
@@ -32,10 +119,10 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
       localStorage.removeItem("dashboardView");
       return;
     }
-
     localStorage.setItem("dashboardView", innerPage);
   }, [innerPage, user]);
 
+  // ── Seller pages ──────────────────────────────────────────
   if (user?.role === "seller") {
     if (innerPage === "sellerDashboard" || innerPage === "main") {
       return <SellerDashboard user={user} setPage={setInnerPage} setRootPage={setRootPage} onLogout={onLogout} />;
@@ -50,38 +137,22 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
       return <EditProperty property={editTarget} setPage={setInnerPage} showToast={showToast} />;
     }
     if (innerPage === "sellerMessages") {
-      return <SellerMessagesPage user={user} setPage={setInnerPage} setRootPage={setRootPage} onLogout={onLogout} showToast={showToast}/>;
-}
+      return <SellerMessagesPage user={user} setPage={setInnerPage} setRootPage={setRootPage} onLogout={onLogout} showToast={showToast} />;
+    }
   }
 
+  // ── Buyer pages ───────────────────────────────────────────
   if (user?.role === "buyer") {
     if (innerPage === "favorites") {
       return <FavoritesPage setPage={setInnerPage} setRootPage={setRootPage} onLogout={onLogout} showToast={showToast} />;
     }
-
     if (innerPage === "profile") {
-      return (
-        <BuyerProfilePage
-          user={user}
-          setPage={setInnerPage}
-          setRootPage={setRootPage}
-          onLogout={onLogout}
-          showToast={showToast}
-        />
-      );
+      return <BuyerProfilePage user={user} setPage={setInnerPage} setRootPage={setRootPage} onLogout={onLogout} showToast={showToast} />;
     }
-
-    return (
-      <BuyerDashboard
-        user={user}
-        setPage={setInnerPage}
-        setRootPage={setRootPage}
-        onLogout={onLogout}
-        showToast={showToast}
-      />
-    );
+    return <BuyerDashboard user={user} setPage={setInnerPage} setRootPage={setRootPage} onLogout={onLogout} showToast={showToast} />;
   }
 
+  // ── Fallback (user pa role te njohur) ─────────────────────
   const initials = user?.name?.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2) || "U";
   const joinDate = profile?.created_at
     ? new Date(profile.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
@@ -92,12 +163,10 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
   return (
     <div className="dashboard">
       <Navbar page="dashboard" setPage={setRootPage} user={user} onLogout={onLogout} />
-
       <div className="dash-header">
         <h2 className="dash-welcome">Welcome back, {user?.name?.split(" ")[0]} 👋</h2>
         <p className="dash-sub">Account authenticated via JWT.</p>
       </div>
-
       <div className="dash-body">
         <div className="dash-cards">
           {[
@@ -108,21 +177,12 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
           ].map(c => (
             <div className="dash-card" key={c.label}>
               <div className="dash-card-label">{c.label}</div>
-              <div className={`dash-card-value ${c.cls}`} style={{ textTransform: "capitalize" }}>
-                {c.value}
-              </div>
+              <div className={`dash-card-value ${c.cls}`} style={{ textTransform: "capitalize" }}>{c.value}</div>
             </div>
           ))}
         </div>
-
         {loading && <p className="loading-text">Fetching profile from API...</p>}
-
-        {apiError && (
-          <div className="alert alert-error">
-            API error: {apiError}. (Check if backend is running on port 5000)
-          </div>
-        )}
-
+        {apiError && <div className="alert alert-error">API error: {apiError}.</div>}
         {profile && (
           <div className="profile-card">
             <p className="profile-card-title">Backend Profile Data (MySQL)</p>
@@ -131,17 +191,11 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
               <div>
                 <p className="profile-name">{profile.name}</p>
                 <p className="profile-email">{profile.email}</p>
-                <span className="profile-role-badge" style={{ background: `${roleColor}18`, color: roleColor }}>
-                  {profile.role}
-                </span>
+                <span className="profile-role-badge" style={{ background: `${roleColor}18`, color: roleColor }}>{profile.role}</span>
               </div>
             </div>
             <div className="profile-details">
-              {[
-                ["User ID", `#${profile.id}`],
-                ["Member Since", joinDate],
-                ["JWT Token", token ? `${token.slice(0, 20)}...` : "—"],
-              ].map(([k, v]) => (
+              {[["User ID", `#${profile.id}`], ["Member Since", joinDate], ["JWT Token", token ? `${token.slice(0, 20)}...` : "—"]].map(([k, v]) => (
                 <div className="profile-row" key={k}>
                   <span className="profile-key">{k}</span>
                   <span className="profile-val">{v}</span>
