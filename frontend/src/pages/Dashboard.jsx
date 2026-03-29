@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { apiFetch } from "../utils/api";
 import Navbar from "../components/Navbar";
+<<<<<<< HEAD
 import SellerDashboard from "./SellerDashboard";
 import MyProperties from "./MyProperties";
 import AddProperty from "./AddProperty";
@@ -95,6 +96,12 @@ const SellerMessagesPage = ({ user, setPage, setRootPage, onLogout }) => (
 // ─────────────────────────────────────────────────────────────
 =======
 >>>>>>> parent of d22f132 (Merge branch 'main' of https://github.com/BlertFK/lab-1)
+=======
+import SellerDashboard from "./SellerDashboard";  
+import MyProperties from "./MyProperties";         
+import AddProperty from "./AddProperty";           
+import EditProperty from "./EditProperty";         
+>>>>>>> parent of ee32085 (rikthimi ne home page permes llogos,+bug fixes)
 
 export default function Dashboard({ user, setPage: setRootPage, onLogout, showToast }) {
   const [innerPage, setInnerPage] = useState("main");
@@ -131,7 +138,7 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
 >>>>>>> parent of d22f132 (Merge branch 'main' of https://github.com/BlertFK/lab-1)
   if (user?.role === "seller") {
     if (innerPage === "sellerDashboard" || innerPage === "main") {
-      return <SellerDashboard user={user} setPage={setInnerPage} setRootPage={setRootPage} onLogout={onLogout} />;
+      return <SellerDashboard user={user} setPage={setInnerPage} onLogout={onLogout} />;
     }
     if (innerPage === "myProperties") {
       return <MyProperties setPage={setInnerPage} setEditTarget={setEditTarget} showToast={showToast} />;
@@ -190,8 +197,20 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
             </div>
           ))}
         </div>
+<<<<<<< HEAD
         {loading && <p className="loading-text">Fetching profile from API...</p>}
         {apiError && <div className="alert alert-error">API error: {apiError}.</div>}
+=======
+
+        {loading && <p className="loading-text">⏳ Fetching profile from API...</p>}
+
+        {apiError && (
+          <div className="alert alert-error">
+            ⚠️ API error: {apiError}. (Check if backend is running on port 5000)
+          </div>
+        )}
+
+>>>>>>> parent of ee32085 (rikthimi ne home page permes llogos,+bug fixes)
         {profile && (
           <div className="profile-card">
             <p className="profile-card-title">Backend Profile Data (MySQL)</p>

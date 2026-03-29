@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 const API = "http://localhost:5000/api";
+
 const DEFAULT_IMG = "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=80";
 
 export default function PropertiesPage({ setPage, setSelectedProperty }) {
@@ -21,6 +22,7 @@ export default function PropertiesPage({ setPage, setSelectedProperty }) {
       if (status) params.append("status", status);
       if (minPrice) params.append("minPrice", minPrice);
       if (maxPrice) params.append("maxPrice", maxPrice);
+
       const res = await fetch(`${API}/properties?${params.toString()}`);
       const data = await res.json();
       setProperties(data.properties || []);
@@ -32,7 +34,10 @@ export default function PropertiesPage({ setPage, setSelectedProperty }) {
 
   useEffect(() => { fetchProperties(); }, []);
 
-  const handleSearch = (e) => { e.preventDefault(); fetchProperties(); };
+  const handleSearch = (e) => {
+    e.preventDefault();
+    fetchProperties();
+  };
 
   const handleReset = () => {
     setSearch(""); setType(""); setStatus(""); setMinPrice(""); setMaxPrice("");
@@ -45,9 +50,17 @@ export default function PropertiesPage({ setPage, setSelectedProperty }) {
   };
 
   const statusBadge = (status) => {
-    const c = { available: { bg: "#d1fae5", color: "#065f46" }, sold: { bg: "#fee2e2", color: "#991b1b" }, rented: { bg: "#ede9fe", color: "#5b21b6" } };
+    const c = {
+      available: { bg: "#d1fae5", color: "#065f46" },
+      sold: { bg: "#fee2e2", color: "#991b1b" },
+      rented: { bg: "#ede9fe", color: "#5b21b6" },
+    };
     const s = c[status] || c.available;
-    return <span style={{ background: s.bg, color: s.color, borderRadius: 999, padding: "2px 10px", fontSize: 11, fontWeight: 600 }}>{status}</span>;
+    return (
+      <span style={{ background: s.bg, color: s.color, borderRadius: 999, padding: "2px 10px", fontSize: 11, fontWeight: 600 }}>
+        {status}
+      </span>
+    );
   };
 
   return (
@@ -55,17 +68,19 @@ export default function PropertiesPage({ setPage, setSelectedProperty }) {
 
       {/* Hero */}
       <div style={{ background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%)", padding: "48px 40px 40px", color: "white", textAlign: "center" }}>
-        <h1 style={{ margin: "0 0 8px", fontSize: 34, fontWeight: 700 }}>Find Your Perfect Property</h1>
-        <p style={{ margin: "0 0 32px", opacity: 0.8, fontSize: 16 }}>Search through our listings</p>
+        <h1 style={{ margin: "0 0 8px", fontSize: 34, fontWeight: 700 }}>Gjej Pronen Perfekte</h1>
+        <p style={{ margin: "0 0 32px", opacity: 0.8, fontSize: 16 }}>Kerko ne listen tone te pronave</p>
+
+        {/* Search bar */}
         <form onSubmit={handleSearch} style={{ display: "flex", gap: 8, maxWidth: 600, margin: "0 auto" }}>
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by title, location..."
+            placeholder="Kerko sipas titullit, lokacionit..."
             style={{ flex: 1, padding: "12px 18px", borderRadius: 10, border: "none", fontSize: 15, outline: "none" }}
           />
           <button type="submit" style={{ padding: "12px 24px", background: "#f59e0b", color: "white", border: "none", borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: "pointer" }}>
-            Search
+            Kerko
           </button>
         </form>
       </div>
@@ -75,56 +90,58 @@ export default function PropertiesPage({ setPage, setSelectedProperty }) {
         {/* Filters */}
         <div style={{ display: "flex", gap: 12, marginBottom: 28, flexWrap: "wrap", alignItems: "flex-end" }}>
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Type</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Tipi</label>
             <select value={type} onChange={(e) => setType(e.target.value)}
               style={{ padding: "9px 14px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 14, outline: "none", background: "white", cursor: "pointer" }}>
-              <option value="">All</option>
-              <option value="Apartment">Apartment</option>
-              <option value="House">House</option>
-              <option value="Villa">Villa</option>
+              <option value="">Te gjitha</option>
+              <option value="Apartment">Apartament</option>
+              <option value="House">Shtepi</option>
+              <option value="Villa">Vila</option>
               <option value="Penthouse">Penthouse</option>
-              <option value="Office">Office</option>
+              <option value="Office">Zyre</option>
             </select>
           </div>
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Status</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Statusi</label>
             <select value={status} onChange={(e) => setStatus(e.target.value)}
               style={{ padding: "9px 14px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 14, outline: "none", background: "white", cursor: "pointer" }}>
-              <option value="">All</option>
+              <option value="">Te gjitha</option>
               <option value="available">Available</option>
               <option value="sold">Sold</option>
               <option value="rented">Rented</option>
             </select>
           </div>
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Min Price ($)</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Cmimi min (Euro)</label>
             <input type="number" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} placeholder="0"
               style={{ padding: "9px 14px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 14, outline: "none", width: 110 }} />
           </div>
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Max Price ($)</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Cmimi max (Euro)</label>
             <input type="number" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} placeholder="999999"
               style={{ padding: "9px 14px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 14, outline: "none", width: 110 }} />
           </div>
           <button onClick={fetchProperties} style={{ padding: "9px 20px", background: "#2563eb", color: "white", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
-            Filter
+            Filtro
           </button>
           <button onClick={handleReset} style={{ padding: "9px 20px", background: "white", color: "#64748b", border: "1px solid #e2e8f0", borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
-            Reset
+            Reseto
           </button>
         </div>
 
+        {/* Results count */}
         <p style={{ color: "#64748b", fontSize: 14, marginBottom: 20 }}>
-          {loading ? "Loading..." : `${properties.length} properties found`}
+          {loading ? "Duke ngarkuar..." : `${properties.length} prone u gjet`}
         </p>
 
+        {/* Grid */}
         {loading ? (
-          <div style={{ textAlign: "center", padding: "80px 0", color: "#94a3b8", fontSize: 18 }}>Loading...</div>
+          <div style={{ textAlign: "center", padding: "80px 0", color: "#94a3b8", fontSize: 18 }}>Duke ngarkuar...</div>
         ) : properties.length === 0 ? (
           <div style={{ textAlign: "center", padding: "80px 0", color: "#94a3b8" }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>🏠</div>
-            <p style={{ fontSize: 18, fontWeight: 600 }}>No properties found</p>
-            <p style={{ fontSize: 14 }}>Try adjusting your filters</p>
+            <p style={{ fontSize: 18, fontWeight: 600 }}>Nuk u gjet asnje prone</p>
+            <p style={{ fontSize: 14 }}>Provo te ndryshosh filtrat</p>
           </div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 24 }}>
@@ -133,28 +150,48 @@ export default function PropertiesPage({ setPage, setSelectedProperty }) {
                 onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.12)"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.07)"; }}
               >
+                {/* Image */}
                 <div style={{ position: "relative", height: 200, overflow: "hidden" }}>
-                  <img src={p.image_url || DEFAULT_IMG} alt={p.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={(e) => { e.target.src = DEFAULT_IMG; }} />
+                  <img
+                    src={p.image_url || DEFAULT_IMG}
+                    alt={p.title}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    onError={(e) => { e.target.src = DEFAULT_IMG; }}
+                  />
                   <div style={{ position: "absolute", top: 12, right: 12 }}>{statusBadge(p.status)}</div>
-                  <div style={{ position: "absolute", top: 12, left: 12, background: "rgba(0,0,0,0.6)", color: "white", borderRadius: 8, padding: "3px 10px", fontSize: 12, fontWeight: 600 }}>{p.type}</div>
+                  <div style={{ position: "absolute", top: 12, left: 12, background: "rgba(0,0,0,0.6)", color: "white", borderRadius: 8, padding: "3px 10px", fontSize: 12, fontWeight: 600 }}>
+                    {p.type}
+                  </div>
                 </div>
+
+                {/* Body */}
                 <div style={{ padding: "16px 20px" }}>
                   <h3 style={{ margin: "0 0 6px", fontSize: 16, fontWeight: 700, color: "#1e293b" }}>{p.title}</h3>
                   <p style={{ margin: "0 0 12px", color: "#64748b", fontSize: 13 }}>📍 {p.location}</p>
                   {p.description && (
-                    <p style={{ margin: "0 0 12px", color: "#94a3b8", fontSize: 13, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{p.description}</p>
+                    <p style={{ margin: "0 0 12px", color: "#94a3b8", fontSize: 13, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                      {p.description}
+                    </p>
                   )}
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontSize: 20, fontWeight: 700, color: "#2563eb" }}>${Number(p.price).toLocaleString()}</span>
-                    {p.seller_name && <span style={{ fontSize: 12, color: "#94a3b8" }}>by {p.seller_name}</span>}
+                    <span style={{ fontSize: 20, fontWeight: 700, color: "#2563eb" }}>
+                      Euro {Number(p.price).toLocaleString()}
+                    </span>
+                    {p.seller_name && (
+                      <span style={{ fontSize: 12, color: "#94a3b8" }}>nga {p.seller_name}</span>
+                    )}
                   </div>
                 </div>
+
+                {/* Footer */}
                 <div style={{ padding: "12px 20px", borderTop: "1px solid #f1f5f9" }}>
-                  <button onClick={() => handleViewDetails(p)} style={{ width: "100%", padding: "10px 0", background: "#2563eb", color: "white", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: "pointer" }}
+                  <button
+                    onClick={() => handleViewDetails(p)}
+                    style={{ width: "100%", padding: "10px 0", background: "#2563eb", color: "white", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: "pointer" }}
                     onMouseEnter={(e) => (e.target.style.background = "#1d4ed8")}
                     onMouseLeave={(e) => (e.target.style.background = "#2563eb")}
                   >
-                    View Details
+                    Shiko Detajet
                   </button>
                 </div>
               </div>

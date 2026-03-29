@@ -1,12 +1,13 @@
-export default function SellerDashboard({ user, setPage, setRootPage, onLogout }) {
+export default function SellerDashboard({ user, setPage, onLogout }) {
   const actions = [
-    { icon: "🏠", label: "My Properties", sub: "View and manage your listings", page: "myProperties" },
-    { icon: "➕", label: "Add Property",   sub: "Create a new listing",          page: "addProperty"  },
+    { icon: "🏠", label: "My Properties",  sub: "View and manage your listings",  page: "myProperties"  },
+    { icon: "➕", label: "Add Property",    sub: "Create a new listing",           page: "addProperty"   },
   ];
 
   return (
     <div className="dashboard">
       <div className="dash-header">
+<<<<<<< HEAD
         <div
           onClick={() => setRootPage("home")}
           style={{ fontSize: 20, fontWeight: 800, color: "#2563eb", cursor: "pointer", marginBottom: 8, display: "inline-block" }}
@@ -18,6 +19,9 @@ export default function SellerDashboard({ user, setPage, setRootPage, onLogout }
 =======
         <h2 className="dash-welcome">Seller Dashboard</h2>
 >>>>>>> parent of d22f132 (Merge branch 'main' of https://github.com/BlertFK/lab-1)
+=======
+        <h2 className="dash-welcome">Seller Dashboard 👋</h2>
+>>>>>>> parent of ee32085 (rikthimi ne home page permes llogos,+bug fixes)
         <p className="dash-sub">Welcome back, {user?.name?.split(" ")[0]}. Manage your properties below.</p>
       </div>
 
