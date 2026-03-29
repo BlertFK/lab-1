@@ -5,6 +5,7 @@ import SellerDashboard from "./SellerDashboard";
 import MyProperties from "./MyProperties";
 import AddProperty from "./AddProperty";
 import EditProperty from "./EditProperty";
+<<<<<<< HEAD
 
 // ── Placeholder components (Member 4 do t'i implementoje) ────
 const BuyerDashboard = ({ user, setPage, setRootPage, onLogout }) => (
@@ -92,9 +93,11 @@ const SellerMessagesPage = ({ user, setPage, setRootPage, onLogout }) => (
   </div>
 );
 // ─────────────────────────────────────────────────────────────
+=======
+>>>>>>> parent of d22f132 (Merge branch 'main' of https://github.com/BlertFK/lab-1)
 
 export default function Dashboard({ user, setPage: setRootPage, onLogout, showToast }) {
-  const [innerPage, setInnerPage] = useState(() => localStorage.getItem("dashboardView") || "main");
+  const [innerPage, setInnerPage] = useState("main");
   const [editTarget, setEditTarget] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -114,6 +117,7 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
     loadProfile();
   }, []);
 
+<<<<<<< HEAD
   useEffect(() => {
     if (user?.role !== "buyer") {
       localStorage.removeItem("dashboardView");
@@ -123,6 +127,8 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
   }, [innerPage, user]);
 
   // ── Seller pages ──────────────────────────────────────────
+=======
+>>>>>>> parent of d22f132 (Merge branch 'main' of https://github.com/BlertFK/lab-1)
   if (user?.role === "seller") {
     if (innerPage === "sellerDashboard" || innerPage === "main") {
       return <SellerDashboard user={user} setPage={setInnerPage} setRootPage={setRootPage} onLogout={onLogout} />;
@@ -136,6 +142,7 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
     if (innerPage === "editProperty") {
       return <EditProperty property={editTarget} setPage={setInnerPage} showToast={showToast} />;
     }
+<<<<<<< HEAD
     if (innerPage === "sellerMessages") {
       return <SellerMessagesPage user={user} setPage={setInnerPage} setRootPage={setRootPage} onLogout={onLogout} showToast={showToast} />;
     }
@@ -150,6 +157,8 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
       return <BuyerProfilePage user={user} setPage={setInnerPage} setRootPage={setRootPage} onLogout={onLogout} showToast={showToast} />;
     }
     return <BuyerDashboard user={user} setPage={setInnerPage} setRootPage={setRootPage} onLogout={onLogout} showToast={showToast} />;
+=======
+>>>>>>> parent of d22f132 (Merge branch 'main' of https://github.com/BlertFK/lab-1)
   }
 
   // ── Fallback (user pa role te njohur) ─────────────────────

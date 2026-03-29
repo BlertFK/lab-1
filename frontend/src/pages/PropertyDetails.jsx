@@ -1,22 +1,16 @@
 import { useState, useEffect } from "react";
-import { apiFetch } from "../utils/api";
 
+const API = "http://localhost:5000/api";
 const DEFAULT_IMG = "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=80";
 
-export default function PropertyDetails({ property, setPage, user }) {
+export default function PropertyDetails({ property, setPage }) {
   const [details, setDetails] = useState(property || null);
   const [loading, setLoading] = useState(!property);
-
-  const [showForm, setShowForm] = useState(false);
-  const [message, setMessage] = useState("");
-  const [sending, setSending] = useState(false);
-  const [formError, setFormError] = useState("");
-  const [formSuccess, setFormSuccess] = useState("");
 
   useEffect(() => {
     if (property?.id) {
       setLoading(true);
-      fetch(`http://localhost:5000/api/properties/${property.id}`)
+      fetch(`${API}/properties/${property.id}`)
         .then((r) => r.json())
         .then((data) => { setDetails(data.property); setLoading(false); })
         .catch(() => setLoading(false));
@@ -25,33 +19,8 @@ export default function PropertyDetails({ property, setPage, user }) {
 
   const statusColor = {
     available: { bg: "#d1fae5", color: "#065f46" },
-    sold:      { bg: "#fee2e2", color: "#991b1b" },
-    rented:    { bg: "#ede9fe", color: "#5b21b6" },
-  };
-
-  const handleSendMessage = async () => {
-    setFormError("");
-    setFormSuccess("");
-
-    if (!message.trim()) {
-      setFormError("Please enter a message before sending.");
-      return;
-    }
-
-    setSending(true);
-    try {
-      await apiFetch("/messages", {
-        method: "POST",
-        body: JSON.stringify({ property_id: details.id, message: message.trim() }),
-      });
-      setFormSuccess("Your message was sent successfully! The seller will get back to you.");
-      setMessage("");
-      setShowForm(false);
-    } catch (err) {
-      setFormError(err.message || "Failed to send message. Please try again.");
-    } finally {
-      setSending(false);
-    }
+    sold: { bg: "#fee2e2", color: "#991b1b" },
+    rented: { bg: "#ede9fe", color: "#5b21b6" },
   };
 
   if (loading) return (
@@ -73,7 +42,6 @@ export default function PropertyDetails({ property, setPage, user }) {
   );
 
   const sc = statusColor[details.status] || statusColor.available;
-  const isBuyer = user?.role === "buyer";
 
   return (
     <div style={{ minHeight: "100vh", background: "#f8fafc", fontFamily: "'Segoe UI', sans-serif" }}>

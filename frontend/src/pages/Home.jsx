@@ -3,12 +3,12 @@ import Features from "../components/Features";
 import Properties from "../components/Properties";
 import FAQ from "../components/FAQ";
 
-export default function Home({ setPage, user, showToast }) {
+export default function Home({ setPage, user }) {
     return (
         <>
             <Hero setPage={setPage} user={user} />
             <Features />
-            <Properties setPage={setPage} user={user} showToast={showToast} />
+            <Properties />
             <FAQ />
         </>
     );

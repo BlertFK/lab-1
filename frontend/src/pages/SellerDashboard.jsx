@@ -1,7 +1,7 @@
 export default function SellerDashboard({ user, setPage, setRootPage, onLogout }) {
   const actions = [
-    { icon: "🏠", label: "My Properties",  sub: "View and manage your listings",  page: "myProperties"  },
-    { icon: "➕", label: "Add Property",    sub: "Create a new listing",           page: "addProperty"   },
+    { icon: "🏠", label: "My Properties", sub: "View and manage your listings", page: "myProperties" },
+    { icon: "➕", label: "Add Property",   sub: "Create a new listing",          page: "addProperty"  },
   ];
 
   return (
@@ -13,12 +13,16 @@ export default function SellerDashboard({ user, setPage, setRootPage, onLogout }
         >
           UrbanKeys
         </div>
+<<<<<<< HEAD
         <h2 className="dash-welcome">Seller Dashboard 👋</h2>
+=======
+        <h2 className="dash-welcome">Seller Dashboard</h2>
+>>>>>>> parent of d22f132 (Merge branch 'main' of https://github.com/BlertFK/lab-1)
         <p className="dash-sub">Welcome back, {user?.name?.split(" ")[0]}. Manage your properties below.</p>
       </div>
 
       <div className="dash-body">
-        <div className="dash-cards" style={{ maxWidth: 700 }}>
+        <div className="dash-cards" style={{ maxWidth: 600 }}>
           {actions.map(a => (
             <div key={a.page} className="dash-card seller-action-card" onClick={() => setPage(a.page)}
               style={{ cursor: "pointer" }}>
