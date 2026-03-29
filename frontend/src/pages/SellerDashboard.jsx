@@ -7,53 +7,47 @@ export default function SellerDashboard({ user, setPage, onLogout }) {
   return (
     <div className="dashboard">
       <div className="dash-header">
-<<<<<<< HEAD
+        
         <div
           onClick={() => setRootPage("home")}
           style={{ fontSize: 20, fontWeight: 800, color: "#2563eb", cursor: "pointer", marginBottom: 8, display: "inline-block" }}
         >
           UrbanKeys
         </div>
-<<<<<<< HEAD
         <h2 className="dash-welcome">Seller Dashboard 👋</h2>
-=======
-        <h2 className="dash-welcome">Seller Dashboard</h2>
->>>>>>> parent of d22f132 (Merge branch 'main' of https://github.com/BlertFK/lab-1)
-=======
-        <h2 className="dash-welcome">Seller Dashboard 👋</h2>
->>>>>>> parent of ee32085 (rikthimi ne home page permes llogos,+bug fixes)
+
         <p className="dash-sub">Welcome back, {user?.name?.split(" ")[0]}. Manage your properties below.</p>
       </div>
 
-      <div className="dash-body">
-        <div className="dash-cards" style={{ maxWidth: 600 }}>
-          {actions.map(a => (
-            <div key={a.page} className="dash-card seller-action-card" onClick={() => setPage(a.page)}
-              style={{ cursor: "pointer" }}>
-              <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>{a.icon}</div>
-              <div className="dash-card-label" style={{ fontSize: "0.95rem", fontWeight: 600, textTransform: "none", color: "var(--text)" }}>{a.label}</div>
-              <div className="dash-card-label" style={{ marginBottom: 0 }}>{a.sub}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="profile-card" style={{ marginTop: "2rem", maxWidth: 420 }}>
-          <p className="profile-card-title">Account</p>
-          <div className="profile-top">
-            <div className="profile-avatar">
-              {user?.name?.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2)}
-            </div>
-            <div>
-              <p className="profile-name">{user?.name}</p>
-              <p className="profile-email">{user?.email}</p>
-              <span className="profile-role-badge" style={{ background: "#05966918", color: "#059669" }}>seller</span>
-            </div>
+    <div className="dash-body">
+      <div className="dash-cards" style={{ maxWidth: 600 }}>
+        {actions.map(a => (
+          <div key={a.page} className="dash-card seller-action-card" onClick={() => setPage(a.page)}
+            style={{ cursor: "pointer" }}>
+            <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>{a.icon}</div>
+            <div className="dash-card-label" style={{ fontSize: "0.95rem", fontWeight: 600, textTransform: "none", color: "var(--text)" }}>{a.label}</div>
+            <div className="dash-card-label" style={{ marginBottom: 0 }}>{a.sub}</div>
           </div>
-          <button className="btn-submit" style={{ background: "var(--error)" }} onClick={onLogout}>
-            Sign Out
-          </button>
+        ))}
+      </div>
+
+      <div className="profile-card" style={{ marginTop: "2rem", maxWidth: 420 }}>
+        <p className="profile-card-title">Account</p>
+        <div className="profile-top">
+          <div className="profile-avatar">
+            {user?.name?.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2)}
+          </div>
+          <div>
+            <p className="profile-name">{user?.name}</p>
+            <p className="profile-email">{user?.email}</p>
+            <span className="profile-role-badge" style={{ background: "#05966918", color: "#059669" }}>seller</span>
+          </div>
         </div>
+        <button className="btn-submit" style={{ background: "var(--error)" }} onClick={onLogout}>
+          Sign Out
+        </button>
       </div>
     </div>
-  );
+  </div>
+);
 }
