@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { apiFetch } from "../utils/api";
 import Navbar from "../components/Navbar";
-import SellerDashboard from "./SellerDashboard";  
-import MyProperties from "./MyProperties";         
-import AddProperty from "./AddProperty";           
-import EditProperty from "./EditProperty";         
+import SellerDashboard from "./SellerDashboard";
+import MyProperties from "./MyProperties";
+import AddProperty from "./AddProperty";
+import EditProperty from "./EditProperty";
 
 export default function Dashboard({ user, setPage: setRootPage, onLogout, showToast }) {
   const [innerPage, setInnerPage] = useState("main");
@@ -29,7 +29,7 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
 
   if (user?.role === "seller") {
     if (innerPage === "sellerDashboard" || innerPage === "main") {
-      return <SellerDashboard user={user} setPage={setInnerPage} onLogout={onLogout} />;
+      return <SellerDashboard user={user} setPage={setInnerPage} setRootPage={setRootPage} onLogout={onLogout} />;
     }
     if (innerPage === "myProperties") {
       return <MyProperties setPage={setInnerPage} setEditTarget={setEditTarget} showToast={showToast} />;
@@ -75,11 +75,11 @@ export default function Dashboard({ user, setPage: setRootPage, onLogout, showTo
           ))}
         </div>
 
-        {loading && <p className="loading-text">⏳ Fetching profile from API...</p>}
+        {loading && <p className="loading-text">Fetching profile from API...</p>}
 
         {apiError && (
           <div className="alert alert-error">
-            ⚠️ API error: {apiError}. (Check if backend is running on port 5000)
+            API error: {apiError}. (Check if backend is running on port 5000)
           </div>
         )}
 

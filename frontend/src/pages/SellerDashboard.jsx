@@ -1,21 +1,26 @@
-export default function SellerDashboard({ user, setPage, onLogout }) {
+export default function SellerDashboard({ user, setPage, setRootPage, onLogout }) {
   const actions = [
-    { icon: "🏠", label: "My Properties",  sub: "View and manage your listings",  page: "myProperties"  },
-    { icon: "➕", label: "Add Property",    sub: "Create a new listing",           page: "addProperty"   },
+    { icon: "🏠", label: "My Properties", sub: "View and manage your listings", page: "myProperties" },
+    { icon: "➕", label: "Add Property",   sub: "Create a new listing",          page: "addProperty"  },
   ];
 
   return (
     <div className="dashboard">
       <div className="dash-header">
-        <h2 className="dash-welcome">Seller Dashboard 👋</h2>
+        <div
+          onClick={() => setRootPage("home")}
+          style={{ fontSize: 20, fontWeight: 800, color: "#2563eb", cursor: "pointer", marginBottom: 8, display: "inline-block" }}
+        >
+          UrbanKeys
+        </div>
+        <h2 className="dash-welcome">Seller Dashboard</h2>
         <p className="dash-sub">Welcome back, {user?.name?.split(" ")[0]}. Manage your properties below.</p>
       </div>
 
       <div className="dash-body">
         <div className="dash-cards" style={{ maxWidth: 600 }}>
           {actions.map(a => (
-            <div key={a.page} className="dash-card seller-action-card" onClick={() => setPage(a.page)}
-              style={{ cursor: "pointer" }}>
+            <div key={a.page} className="dash-card seller-action-card" onClick={() => setPage(a.page)} style={{ cursor: "pointer" }}>
               <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>{a.icon}</div>
               <div className="dash-card-label" style={{ fontSize: "0.95rem", fontWeight: 600, textTransform: "none", color: "var(--text)" }}>{a.label}</div>
               <div className="dash-card-label" style={{ marginBottom: 0 }}>{a.sub}</div>

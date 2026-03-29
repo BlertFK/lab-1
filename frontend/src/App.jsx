@@ -22,7 +22,6 @@ export default function App() {
   });
 
   const [toast, setToast] = useState(null);
-
   const showToast = useCallback((message, type = "success") => setToast({ message, type }), []);
 
   const handleLoginSuccess = useCallback((userData) => {
@@ -44,51 +43,37 @@ export default function App() {
 
   return (
     <>
-      {/* Navbar - shfaqet ne faqet publike */}
       {showNavbar && (
         <Navbar page={page} setPage={setPage} user={user} onLogout={handleLogout} />
       )}
 
-      {/* Auth pages */}
       {page === "login" && (
         <LoginPage setPage={setPage} onLoginSuccess={handleLoginSuccess} />
       )}
       {page === "register" && (
         <RegisterPage setPage={setPage} showToast={showToast} />
       )}
-
-      {/* Admin */}
       {page === "admin" && user?.role === "admin" && (
-        <AdminDashboard onLogout={handleLogout} />
+        <AdminDashboard onLogout={handleLogout} setPage={setPage} />
       )}
-
-      {/* Seller/Buyer dashboard */}
       {page === "dashboard" && user && (
         <Dashboard user={user} setPage={setPage} onLogout={handleLogout} showToast={showToast} />
       )}
-
-      {/* Home */}
       {page === "home" && (
         <>
           <Home setPage={setPage} user={user} />
           <Footer />
         </>
       )}
-
-      {/* Properties list — Member 2 */}
       {page === "properties" && (
         <>
           <PropertiesPage setPage={setPage} setSelectedProperty={setSelectedProperty} />
           <Footer />
         </>
       )}
-
-      {/* Property details — Member 2 */}
       {page === "propertyDetails" && (
         <PropertyDetails property={selectedProperty} setPage={setPage} />
       )}
-
-      {/* Redirect ne home nese jo i loguar dhe mundohet te hype ne dashboard */}
       {!user && page === "dashboard" && (
         <>
           <Home setPage={setPage} user={user} />
@@ -96,7 +81,6 @@ export default function App() {
         </>
       )}
 
-      {/* Toast notifications */}
       {toast && (
         <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
       )}
