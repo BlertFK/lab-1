@@ -67,7 +67,7 @@ export default function PropertiesPage({ setPage, setSelectedProperty }) {
     <div style={{ minHeight: "100vh", background: "#f8fafc", fontFamily: "'Segoe UI', sans-serif" }}>
 
       {/* Hero */}
-      <div style={{ background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%)", padding: "48px 40px 40px", color: "white", textAlign: "center" }}>
+      <div style={{ background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%)", padding: "120px 40px 40px", color: "white", textAlign: "center" }}>
         <h1 style={{ margin: "0 0 8px", fontSize: 34, fontWeight: 700 }}>Gjej Pronen Perfekte</h1>
         <p style={{ margin: "0 0 32px", opacity: 0.8, fontSize: 16 }}>Kerko ne listen tone te pronave</p>
 
