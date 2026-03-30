@@ -68,19 +68,19 @@ export default function PropertiesPage({ setPage, setSelectedProperty }) {
 
       {/* Hero */}
       <div style={{ background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%)", padding: "120px 40px 40px", color: "white", textAlign: "center" }}>
-        <h1 style={{ margin: "0 0 8px", fontSize: 34, fontWeight: 700 }}>Gjej Pronen Perfekte</h1>
-        <p style={{ margin: "0 0 32px", opacity: 0.8, fontSize: 16 }}>Kerko ne listen tone te pronave</p>
+        <h1 style={{ margin: "0 0 8px", fontSize: 34, fontWeight: 700 }}>Find the Perfect Property</h1>
+        <p style={{ margin: "0 0 32px", opacity: 0.8, fontSize: 16 }}>Search in our property listings</p>
 
         {/* Search bar */}
         <form onSubmit={handleSearch} style={{ display: "flex", gap: 8, maxWidth: 600, margin: "0 auto" }}>
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Kerko sipas titullit, lokacionit..."
+            placeholder="Search by title, location..."
             style={{ flex: 1, padding: "12px 18px", borderRadius: 10, border: "none", fontSize: 15, outline: "none" }}
           />
           <button type="submit" style={{ padding: "12px 24px", background: "#f59e0b", color: "white", border: "none", borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: "pointer" }}>
-            Kerko
+            Search
           </button>
         </form>
       </div>
@@ -90,58 +90,58 @@ export default function PropertiesPage({ setPage, setSelectedProperty }) {
         {/* Filters */}
         <div style={{ display: "flex", gap: 12, marginBottom: 28, flexWrap: "wrap", alignItems: "flex-end" }}>
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Tipi</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Type</label>
             <select value={type} onChange={(e) => setType(e.target.value)}
               style={{ padding: "9px 14px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 14, outline: "none", background: "white", cursor: "pointer" }}>
-              <option value="">Te gjitha</option>
-              <option value="Apartment">Apartament</option>
-              <option value="House">Shtepi</option>
-              <option value="Villa">Vila</option>
+              <option value="">All</option>
+              <option value="Apartment">Apartment</option>
+              <option value="House">House</option>
+              <option value="Villa">Villa</option>
               <option value="Penthouse">Penthouse</option>
-              <option value="Office">Zyre</option>
+              <option value="Office">Office</option>
             </select>
           </div>
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Statusi</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Status</label>
             <select value={status} onChange={(e) => setStatus(e.target.value)}
               style={{ padding: "9px 14px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 14, outline: "none", background: "white", cursor: "pointer" }}>
-              <option value="">Te gjitha</option>
+              <option value="">All</option>
               <option value="available">Available</option>
               <option value="sold">Sold</option>
               <option value="rented">Rented</option>
             </select>
           </div>
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Cmimi min (Euro)</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Min price (Euro)</label>
             <input type="number" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} placeholder="0"
               style={{ padding: "9px 14px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 14, outline: "none", width: 110 }} />
           </div>
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Cmimi max (Euro)</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 }}>Max price (Euro)</label>
             <input type="number" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} placeholder="999999"
               style={{ padding: "9px 14px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 14, outline: "none", width: 110 }} />
           </div>
           <button onClick={fetchProperties} style={{ padding: "9px 20px", background: "#2563eb", color: "white", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
-            Filtro
+            Filter
           </button>
           <button onClick={handleReset} style={{ padding: "9px 20px", background: "white", color: "#64748b", border: "1px solid #e2e8f0", borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
-            Reseto
+            Reset
           </button>
         </div>
 
         {/* Results count */}
         <p style={{ color: "#64748b", fontSize: 14, marginBottom: 20 }}>
-          {loading ? "Duke ngarkuar..." : `${properties.length} prone u gjet`}
+          {loading ? "Loading..." : `${properties.length} properties found`}
         </p>
 
         {/* Grid */}
         {loading ? (
-          <div style={{ textAlign: "center", padding: "80px 0", color: "#94a3b8", fontSize: 18 }}>Duke ngarkuar...</div>
+          <div style={{ textAlign: "center", padding: "80px 0", color: "#94a3b8", fontSize: 18 }}>Loading...</div>
         ) : properties.length === 0 ? (
           <div style={{ textAlign: "center", padding: "80px 0", color: "#94a3b8" }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>🏠</div>
-            <p style={{ fontSize: 18, fontWeight: 600 }}>Nuk u gjet asnje prone</p>
-            <p style={{ fontSize: 14 }}>Provo te ndryshosh filtrat</p>
+            <p style={{ fontSize: 18, fontWeight: 600 }}>No properties found</p>
+            <p style={{ fontSize: 14 }}>Try changing the filters</p>
           </div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 24 }}>
@@ -178,7 +178,7 @@ export default function PropertiesPage({ setPage, setSelectedProperty }) {
                       Euro {Number(p.price).toLocaleString()}
                     </span>
                     {p.seller_name && (
-                      <span style={{ fontSize: 12, color: "#94a3b8" }}>nga {p.seller_name}</span>
+                      <span style={{ fontSize: 12, color: "#94a3b8" }}>by {p.seller_name}</span>
                     )}
                   </div>
                 </div>
@@ -191,7 +191,7 @@ export default function PropertiesPage({ setPage, setSelectedProperty }) {
                     onMouseEnter={(e) => (e.target.style.background = "#1d4ed8")}
                     onMouseLeave={(e) => (e.target.style.background = "#2563eb")}
                   >
-                    Shiko Detajet
+                    View Details
                   </button>
                 </div>
               </div>

@@ -58,7 +58,7 @@ export default function PropertyDetails({ property, setPage, user }) {
 
   if (loading) return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Segoe UI', sans-serif", color: "#94a3b8", fontSize: 18 }}>
-      Duke ngarkuar...
+      Loading...
     </div>
   );
 
@@ -66,9 +66,9 @@ export default function PropertyDetails({ property, setPage, user }) {
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Segoe UI', sans-serif", color: "#94a3b8" }}>
       <div style={{ textAlign: "center" }}>
         <div style={{ fontSize: 48, marginBottom: 16 }}>🏠</div>
-        <p>Prona nuk u gjet.</p>
+        <p>Property not found.</p>
         <button onClick={() => setPage("properties")} style={{ marginTop: 12, padding: "10px 24px", background: "#2563eb", color: "white", border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 600 }}>
-          Kthehu
+          Go back
         </button>
       </div>
     </div>
@@ -83,7 +83,7 @@ export default function PropertyDetails({ property, setPage, user }) {
       <div style={{ maxWidth: 1000, margin: "0 auto", padding: "24px 40px 0" }}>
         <button onClick={() => setPage("properties")}
           style={{ background: "none", border: "none", color: "#2563eb", fontWeight: 600, fontSize: 14, cursor: "pointer", padding: 0 }}>
-          ← Kthehu te lista
+          ← Back to list
         </button>
       </div>
 
@@ -110,20 +110,20 @@ export default function PropertyDetails({ property, setPage, user }) {
             <p style={{ margin: "0 0 20px", color: "#64748b", fontSize: 15 }}>📍 {details.location}</p>
 
             <div style={{ background: "white", borderRadius: 12, padding: "20px 24px", border: "1px solid #e2e8f0", marginBottom: 20 }}>
-              <h3 style={{ margin: "0 0 12px", fontSize: 16, fontWeight: 700, color: "#1e293b" }}>Pershkrimi</h3>
+              <h3 style={{ margin: "0 0 12px", fontSize: 16, fontWeight: 700, color: "#1e293b" }}>Description</h3>
               <p style={{ margin: 0, color: "#475569", fontSize: 15, lineHeight: 1.6 }}>
-                {details.description || "Nuk ka pershkrim per kete prone."}
+                {details.description || "No description available for this property."}
               </p>
             </div>
 
             <div style={{ background: "white", borderRadius: 12, padding: "20px 24px", border: "1px solid #e2e8f0" }}>
-              <h3 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b" }}>Detajet</h3>
+              <h3 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b" }}>Details</h3>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 {[
-                  ["Tipi", details.type],
-                  ["Statusi", details.status],
-                  ["Lokacioni", details.location],
-                  ["Postuar me", new Date(details.created_at).toLocaleDateString("sq-AL")],
+                  ["Type", details.type],
+                  ["Status", details.status],
+                  ["Location", details.location],
+                  ["Posted on", new Date(details.created_at).toLocaleDateString("sq-AL")],
                 ].map(([label, value]) => (
                   <div key={label}>
                     <p style={{ margin: "0 0 2px", fontSize: 12, color: "#94a3b8", fontWeight: 600, textTransform: "uppercase" }}>{label}</p>
@@ -137,7 +137,7 @@ export default function PropertyDetails({ property, setPage, user }) {
           {/* Right — Price + Contact + Seller */}
           <div>
             <div style={{ background: "white", borderRadius: 16, padding: 24, border: "1px solid #e2e8f0", boxShadow: "0 4px 16px rgba(0,0,0,0.06)", marginBottom: 20 }}>
-              <p style={{ margin: "0 0 4px", fontSize: 13, color: "#94a3b8", fontWeight: 600 }}>CMIMI</p>
+              <p style={{ margin: "0 0 4px", fontSize: 13, color: "#94a3b8", fontWeight: 600 }}>PRICE</p>
               <p style={{ margin: "0 0 20px", fontSize: 32, fontWeight: 700, color: "#2563eb" }}>
                 Euro {Number(details.price).toLocaleString()}
               </p>
@@ -151,16 +151,16 @@ export default function PropertyDetails({ property, setPage, user }) {
                       onMouseLeave={(e) => (e.target.style.background = "#2563eb")}
                       onClick={() => { setShowForm(true); setFormError(""); setFormSuccess(""); } }
                     >
-                      ✉️ Kontakto Shitesin
+                      ✉️ Contact Seller
                     </button>
                   ) : (
                     <div style={{ marginBottom: 10 }}>
                       <p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 600, color: "#1e293b" }}>
-                        Dërgoni mesazh shitësit:
+                        Send a message to the seller:
                       </p>
                       <textarea
                         rows={4}
-                        placeholder="Shkruani mesazhin tuaj këtu..."
+                        placeholder="Write your message here..."
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         style={{ width: "100%", padding: "10px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 14, fontFamily: "'Segoe UI', sans-serif", resize: "vertical", boxSizing: "border-box", outline: "none" }} />
@@ -173,13 +173,13 @@ export default function PropertyDetails({ property, setPage, user }) {
                           onClick={handleSendMessage}
                           style={{ flex: 1, padding: "10px 0", background: sending ? "#93c5fd" : "#2563eb", color: "white", border: "none", borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: sending ? "not-allowed" : "pointer" }}
                         >
-                          {sending ? "Duke dërguar..." : "Dërgo"}
+                          {sending ? "Sending..." : "Send"}
                         </button>
                         <button
                           onClick={() => { setShowForm(false); setFormError(""); setMessage(""); } }
                           style={{ flex: 1, padding: "10px 0", background: "white", color: "#64748b", border: "1px solid #cbd5e1", borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: "pointer" }}
                         >
-                          Anulo
+                          Cancel
                         </button>
                       </div>
                     </div>
@@ -198,7 +198,7 @@ export default function PropertyDetails({ property, setPage, user }) {
                   onMouseLeave={(e) => (e.target.style.background = "#2563eb")}
                   onClick={() => setPage && setPage(user ? "dashboard" : "login")}
                 >
-                  Kontakto Shitesin
+                  Contact Seller
                 </button>
               )}
 
@@ -206,13 +206,13 @@ export default function PropertyDetails({ property, setPage, user }) {
                 style={{ width: "100%", padding: "12px 0", background: "white", color: "#2563eb", border: "1px solid #2563eb", borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: "pointer" }}
                 onClick={() => setPage("properties")}
               >
-                Kthehu te Lista
+                Back to list
               </button>
             </div>
 
             {details.seller_name && (
               <div style={{ background: "white", borderRadius: 16, padding: 24, border: "1px solid #e2e8f0" }}>
-                <h3 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b" }}>Shitesi</h3>
+                <h3 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b" }}>Seller</h3>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#dbeafe", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 700, color: "#2563eb" }}>
                     {details.seller_name.charAt(0).toUpperCase()}

@@ -28,9 +28,9 @@ const Modal = ({ title, onClose, onSave, saving, children }) => (
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>{children}</div>
       <div style={{ display: "flex", gap: 12, marginTop: 24 }}>
-        <button onClick={onClose} style={{ flex: 1, padding: "11px 0", borderRadius: 8, border: "1px solid #e2e8f0", background: "white", color: "#64748b", fontWeight: 600, cursor: "pointer", fontSize: 14 }}>Anulo</button>
+        <button onClick={onClose} style={{ flex: 1, padding: "11px 0", borderRadius: 8, border: "1px solid #e2e8f0", background: "white", color: "#64748b", fontWeight: 600, cursor: "pointer", fontSize: 14 }}>Cancel</button>
         <button onClick={onSave} disabled={saving} style={{ flex: 1, padding: "11px 0", borderRadius: 8, border: "none", background: saving ? "#93c5fd" : "#2563eb", color: "white", fontWeight: 600, cursor: "pointer", fontSize: 14 }}>
-          {saving ? "Duke ruajtur..." : "Ruaj"}
+          {saving ? "Saving..." : "Save"}
         </button>
       </div>
     </div>
@@ -50,7 +50,7 @@ export default function AdminDashboard({ onLogout }) {
   const [userForm, setUserForm] = useState({ name: "", email: "", password: "", role: "buyer" });
   const [userLoading, setUserLoading] = useState(false);
 
-  // Property modal (vetem edit)
+  // Property modal (edit only)
   const [propModal, setPropModal] = useState(false);
   const [editProp, setEditProp] = useState(null);
   const [propForm, setPropForm] = useState({ title: "", description: "", price: "", location: "", type: "", status: "available", image_url: "" });
@@ -66,7 +66,7 @@ export default function AdminDashboard({ onLogout }) {
     try {
       const res = await fetch(`${API}/admin/users`, { headers: getHeaders() });
       setUsers(await res.json());
-    } catch { showMsg("Gabim gjate ngarkimit", "error"); }
+    } catch { showMsg("Error loading data", "error"); }
     setLoading(false);
   };
 
@@ -75,7 +75,7 @@ export default function AdminDashboard({ onLogout }) {
     try {
       const res = await fetch(`${API}/admin/properties`, { headers: getHeaders() });
       setProperties(await res.json());
-    } catch { showMsg("Gabim gjate ngarkimit", "error"); }
+    } catch { showMsg("Error loading data", "error"); }
     setLoading(false);
   };
 
@@ -99,7 +99,7 @@ export default function AdminDashboard({ onLogout }) {
 
   const saveUser = async () => {
     if (!userForm.name || !userForm.email || (!editUser && !userForm.password)) {
-      showMsg("Ploteso te gjitha fushat!", "error"); return;
+      showMsg("Please fill in all fields!", "error"); return;
     }
     setUserLoading(true);
     try {
@@ -117,24 +117,24 @@ export default function AdminDashboard({ onLogout }) {
       }
       const data = await res.json();
       if (res.ok) {
-        showMsg(editUser ? "Perdoruesi u perditesua!" : "Perdoruesi u shtua!");
+        showMsg(editUser ? "User updated successfully!" : "User added successfully!");
         setUserModal(false);
         fetchUsers();
       } else {
-        showMsg(data.message || "Gabim", "error");
+        showMsg(data.message || "An error occurred", "error");
       }
-    } catch { showMsg("Gabim", "error"); }
+    } catch { showMsg("An error occurred", "error"); }
     setUserLoading(false);
   };
 
   const deleteUser = async (id) => {
-    if (!confirm("Fshi perdoruesin?")) return;
+    if (!confirm("Delete this user?")) return;
     const res = await fetch(`${API}/admin/users/${id}`, { method: "DELETE", headers: getHeaders() });
-    if (res.ok) { setUsers((p) => p.filter((u) => u.id !== id)); showMsg("U fshi!"); }
-    else showMsg("Gabim gjate fshirjes", "error");
+    if (res.ok) { setUsers((p) => p.filter((u) => u.id !== id)); showMsg("Deleted successfully!"); }
+    else showMsg("Error deleting user", "error");
   };
 
-  // ── PROPERTY — vetem edit dhe delete ──────
+  // ── PROPERTY — edit and delete only ──────
   const openEditProp = (p) => {
     setEditProp(p);
     setPropForm({ title: p.title, description: p.description || "", price: p.price, location: p.location, type: p.type, status: p.status, image_url: p.image_url || "" });
@@ -143,7 +143,7 @@ export default function AdminDashboard({ onLogout }) {
 
   const saveProp = async () => {
     if (!propForm.title || !propForm.price || !propForm.location) {
-      showMsg("Ploteso fushat e detyrueshme!", "error"); return;
+      showMsg("Please fill in all required fields!", "error"); return;
     }
     setPropLoading(true);
     try {
@@ -152,21 +152,21 @@ export default function AdminDashboard({ onLogout }) {
       });
       const data = await res.json();
       if (res.ok) {
-        showMsg("Prona u perditesua!");
+        showMsg("Property updated successfully!");
         setPropModal(false);
         fetchProperties();
       } else {
-        showMsg(data.message || "Gabim", "error");
+        showMsg(data.message || "An error occurred", "error");
       }
-    } catch { showMsg("Gabim", "error"); }
+    } catch { showMsg("An error occurred", "error"); }
     setPropLoading(false);
   };
 
   const deleteProp = async (id) => {
-    if (!confirm("Fshi pronen?")) return;
+    if (!confirm("Delete this property?")) return;
     const res = await fetch(`${API}/admin/properties/${id}`, { method: "DELETE", headers: getHeaders() });
-    if (res.ok) { setProperties((p) => p.filter((x) => x.id !== id)); showMsg("U fshi!"); }
-    else showMsg("Gabim gjate fshirjes", "error");
+    if (res.ok) { setProperties((p) => p.filter((x) => x.id !== id)); showMsg("Deleted successfully!"); }
+    else showMsg("Error deleting property", "error");
   };
   
   const roleBadge = (role) => {
@@ -194,14 +194,14 @@ export default function AdminDashboard({ onLogout }) {
           <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
             <div style={{ textAlign: "center", background: "rgba(255,255,255,0.15)", borderRadius: 12, padding: "10px 20px" }}>
               <div style={{ fontSize: 22, fontWeight: 700 }}>{users.length}</div>
-              <div style={{ fontSize: 11, opacity: 0.8 }}>Perdorues</div>
+              <div style={{ fontSize: 11, opacity: 0.8 }}>Users</div>
             </div>
             <div style={{ textAlign: "center", background: "rgba(255,255,255,0.15)", borderRadius: 12, padding: "10px 20px" }}>
               <div style={{ fontSize: 22, fontWeight: 700 }}>{properties.length}</div>
-              <div style={{ fontSize: 11, opacity: 0.8 }}>Prona</div>
+              <div style={{ fontSize: 11, opacity: 0.8 }}>Properties</div>
             </div>
             <button onClick={onLogout} style={{ padding: "10px 20px", background: "rgba(255,255,255,0.15)", color: "white", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
-              Dil
+              Logout
             </button>
           </div>
         </div>
@@ -216,12 +216,12 @@ export default function AdminDashboard({ onLogout }) {
 
       {/* User Modal */}
       {userModal && (
-        <Modal title={editUser ? "Ndrysho Perdoruesin" : "Shto Perdorues"} onClose={() => setUserModal(false)} onSave={saveUser} saving={userLoading}>
-          <div><label style={labelStyle}>Emri *</label><input style={inputStyle} placeholder="Arta Krasniqi" value={userForm.name} onChange={(e) => setUserForm({ ...userForm, name: e.target.value })} /></div>
-          <div><label style={labelStyle}>Email *</label><input style={inputStyle} type="email" placeholder="arta@email.com" value={userForm.email} onChange={(e) => setUserForm({ ...userForm, email: e.target.value })} /></div>
-          <div><label style={labelStyle}>Fjalekalimi {editUser ? "(ler bosh per te mos ndryshuar)" : "*"}</label><input style={inputStyle} type="password" placeholder="Min. 6 karaktere" value={userForm.password} onChange={(e) => setUserForm({ ...userForm, password: e.target.value })} /></div>
+        <Modal title={editUser ? "Edit User" : "Add User"} onClose={() => setUserModal(false)} onSave={saveUser} saving={userLoading}>
+          <div><label style={labelStyle}>Full Name *</label><input style={inputStyle} placeholder="Jane Doe" value={userForm.name} onChange={(e) => setUserForm({ ...userForm, name: e.target.value })} /></div>
+          <div><label style={labelStyle}>Email *</label><input style={inputStyle} type="email" placeholder="jane@email.com" value={userForm.email} onChange={(e) => setUserForm({ ...userForm, email: e.target.value })} /></div>
+          <div><label style={labelStyle}>Password {editUser ? "(leave blank to keep unchanged)" : "*"}</label><input style={inputStyle} type="password" placeholder="Min. 6 characters" value={userForm.password} onChange={(e) => setUserForm({ ...userForm, password: e.target.value })} /></div>
           <div>
-            <label style={labelStyle}>Roli *</label>
+            <label style={labelStyle}>Role *</label>
             <select style={{ ...inputStyle, background: "white" }} value={userForm.role} onChange={(e) => setUserForm({ ...userForm, role: e.target.value })}>
               <option value="buyer">Buyer</option>
               <option value="seller">Seller</option>
@@ -231,23 +231,23 @@ export default function AdminDashboard({ onLogout }) {
         </Modal>
       )}
 
-      {/* Property Modal - vetem edit */}
+      {/* Property Modal - edit only */}
       {propModal && (
-        <Modal title="Ndrysho Pronen" onClose={() => setPropModal(false)} onSave={saveProp} saving={propLoading}>
-          <div><label style={labelStyle}>Titulli *</label><input style={inputStyle} placeholder="Apartament 2+1" value={propForm.title} onChange={(e) => setPropForm({ ...propForm, title: e.target.value })} /></div>
-          <div><label style={labelStyle}>Pershkrimi</label><textarea style={{ ...inputStyle, height: 80, resize: "vertical" }} placeholder="Pershkrim i prones..." value={propForm.description} onChange={(e) => setPropForm({ ...propForm, description: e.target.value })} /></div>
-          <div><label style={labelStyle}>Cmimi (Euro) *</label><input style={inputStyle} type="number" placeholder="85000" value={propForm.price} onChange={(e) => setPropForm({ ...propForm, price: e.target.value })} /></div>
-          <div><label style={labelStyle}>Lokacioni *</label><input style={inputStyle} placeholder="Prishtine" value={propForm.location} onChange={(e) => setPropForm({ ...propForm, location: e.target.value })} /></div>
-          <div><label style={labelStyle}>Tipi</label><input style={inputStyle} placeholder="Apartament / Shtepie / Zyre" value={propForm.type} onChange={(e) => setPropForm({ ...propForm, type: e.target.value })} /></div>
+        <Modal title="Edit Property" onClose={() => setPropModal(false)} onSave={saveProp} saving={propLoading}>
+          <div><label style={labelStyle}>Title *</label><input style={inputStyle} placeholder="2+1 Apartment" value={propForm.title} onChange={(e) => setPropForm({ ...propForm, title: e.target.value })} /></div>
+          <div><label style={labelStyle}>Description</label><textarea style={{ ...inputStyle, height: 80, resize: "vertical" }} placeholder="Property description..." value={propForm.description} onChange={(e) => setPropForm({ ...propForm, description: e.target.value })} /></div>
+          <div><label style={labelStyle}>Price (Euro) *</label><input style={inputStyle} type="number" placeholder="85000" value={propForm.price} onChange={(e) => setPropForm({ ...propForm, price: e.target.value })} /></div>
+          <div><label style={labelStyle}>Location *</label><input style={inputStyle} placeholder="Pristina" value={propForm.location} onChange={(e) => setPropForm({ ...propForm, location: e.target.value })} /></div>
+          <div><label style={labelStyle}>Type</label><input style={inputStyle} placeholder="Apartment / House / Office" value={propForm.type} onChange={(e) => setPropForm({ ...propForm, type: e.target.value })} /></div>
           <div>
-            <label style={labelStyle}>Statusi</label>
+            <label style={labelStyle}>Status</label>
             <select style={{ ...inputStyle, background: "white" }} value={propForm.status} onChange={(e) => setPropForm({ ...propForm, status: e.target.value })}>
               <option value="available">Available</option>
               <option value="sold">Sold</option>
               <option value="rented">Rented</option>
             </select>
           </div>
-          <div><label style={labelStyle}>URL e Imazhit</label><input style={inputStyle} placeholder="https://..." value={propForm.image_url} onChange={(e) => setPropForm({ ...propForm, image_url: e.target.value })} /></div>
+          <div><label style={labelStyle}>Image URL</label><input style={inputStyle} placeholder="https://..." value={propForm.image_url} onChange={(e) => setPropForm({ ...propForm, image_url: e.target.value })} /></div>
         </Modal>
       )}
 
@@ -258,13 +258,13 @@ export default function AdminDashboard({ onLogout }) {
           <div style={{ display: "flex", gap: 4, background: "#e2e8f0", borderRadius: 12, padding: 4 }}>
             {["users", "properties"].map((t) => (
               <button key={t} onClick={() => setTab(t)} style={{ padding: "10px 28px", borderRadius: 9, border: "none", cursor: "pointer", fontWeight: 600, fontSize: 14, transition: "all 0.2s", background: tab === t ? "white" : "transparent", color: tab === t ? "#2563eb" : "#64748b", boxShadow: tab === t ? "0 2px 8px rgba(0,0,0,0.1)" : "none" }}>
-                {t === "users" ? "Perdoruesit" : "Pronat"}
+                {t === "users" ? "Users" : "Properties"}
               </button>
             ))}
           </div>
           {tab === "users" && (
             <button onClick={openAddUser} style={{ padding: "10px 24px", background: "#2563eb", color: "white", border: "none", borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: "pointer", boxShadow: "0 2px 8px rgba(37,99,235,0.3)" }}>
-              Shto Perdorues
+              Add User
             </button>
           )}
         </div>
@@ -273,20 +273,20 @@ export default function AdminDashboard({ onLogout }) {
         <div style={{ background: "white", borderRadius: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)", overflow: "hidden", border: "1px solid #e2e8f0" }}>
           {loading ? (
             <div style={{ textAlign: "center", padding: "60px 0", color: "#94a3b8" }}>
-              <div style={{ fontWeight: 500 }}>Duke ngarkuar...</div>
+              <div style={{ fontWeight: 500 }}>Loading...</div>
             </div>
           ) : tab === "users" ? (
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
-                  {["ID", "Emri", "Email", "Roli", "Data", "Veprime"].map((h) => (
+                  {["ID", "Name", "Email", "Role", "Date", "Actions"].map((h) => (
                     <th key={h} style={{ padding: "14px 20px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#64748b", letterSpacing: "0.08em", textTransform: "uppercase" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {users.length === 0 ? (
-                  <tr><td colSpan={6} style={{ textAlign: "center", padding: "40px 0", color: "#94a3b8" }}>Nuk ka perdorues</td></tr>
+                  <tr><td colSpan={6} style={{ textAlign: "center", padding: "40px 0", color: "#94a3b8" }}>No users found</td></tr>
                 ) : users.map((u, i) => (
                   <tr key={u.id} style={{ borderBottom: "1px solid #f1f5f9", background: i % 2 === 0 ? "white" : "#fafafa" }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = "#eff6ff")}
@@ -296,16 +296,16 @@ export default function AdminDashboard({ onLogout }) {
                     <td style={{ padding: "14px 20px", fontWeight: 600, color: "#1e293b" }}>{u.name}</td>
                     <td style={{ padding: "14px 20px", color: "#475569", fontSize: 14 }}>{u.email}</td>
                     <td style={{ padding: "14px 20px" }}>{roleBadge(u.role)}</td>
-                    <td style={{ padding: "14px 20px", color: "#94a3b8", fontSize: 13 }}>{new Date(u.created_at).toLocaleDateString("sq-AL")}</td>
+                    <td style={{ padding: "14px 20px", color: "#94a3b8", fontSize: 13 }}>{new Date(u.created_at).toLocaleDateString("en-GB")}</td>
                     <td style={{ padding: "14px 20px" }}>
                       <button onClick={() => openEditUser(u)} style={btnWarning}
                         onMouseEnter={(e) => { e.target.style.background = "#f59e0b"; e.target.style.color = "white"; }}
                         onMouseLeave={(e) => { e.target.style.background = "#fef3c7"; e.target.style.color = "#92400e"; }}
-                      >Ndrysho</button>
+                      >Edit</button>
                       <button onClick={() => deleteUser(u.id)} style={btnDanger}
                         onMouseEnter={(e) => { e.target.style.background = "#dc2626"; e.target.style.color = "white"; }}
                         onMouseLeave={(e) => { e.target.style.background = "#fee2e2"; e.target.style.color = "#dc2626"; }}
-                      >Fshi</button>
+                      >Delete</button>
                     </td>
                   </tr>
                 ))}
@@ -315,14 +315,14 @@ export default function AdminDashboard({ onLogout }) {
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
-                  {["ID", "Titulli", "Cmimi", "Lokacioni", "Tipi", "Statusi", "Veprime"].map((h) => (
+                  {["ID", "Title", "Price", "Location", "Type", "Status", "Actions"].map((h) => (
                     <th key={h} style={{ padding: "14px 20px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#64748b", letterSpacing: "0.08em", textTransform: "uppercase" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {properties.length === 0 ? (
-                  <tr><td colSpan={7} style={{ textAlign: "center", padding: "40px 0", color: "#94a3b8" }}>Nuk ka prona</td></tr>
+                  <tr><td colSpan={7} style={{ textAlign: "center", padding: "40px 0", color: "#94a3b8" }}>No properties found</td></tr>
                 ) : properties.map((p, i) => (
                   <tr key={p.id} style={{ borderBottom: "1px solid #f1f5f9", background: i % 2 === 0 ? "white" : "#fafafa" }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = "#eff6ff")}
@@ -340,11 +340,11 @@ export default function AdminDashboard({ onLogout }) {
                       <button onClick={() => openEditProp(p)} style={btnWarning}
                         onMouseEnter={(e) => { e.target.style.background = "#f59e0b"; e.target.style.color = "white"; }}
                         onMouseLeave={(e) => { e.target.style.background = "#fef3c7"; e.target.style.color = "#92400e"; }}
-                      >Ndrysho</button>
+                      >Edit</button>
                       <button onClick={() => deleteProp(p.id)} style={btnDanger}
                         onMouseEnter={(e) => { e.target.style.background = "#dc2626"; e.target.style.color = "white"; }}
                         onMouseLeave={(e) => { e.target.style.background = "#fee2e2"; e.target.style.color = "#dc2626"; }}
-                      >Fshi</button>
+                      >Delete</button>
                     </td>
                   </tr>
                 ))}
@@ -354,7 +354,7 @@ export default function AdminDashboard({ onLogout }) {
         </div>
 
         <div style={{ marginTop: 16, color: "#94a3b8", fontSize: 13, textAlign: "right" }}>
-          Gjithsej: <strong style={{ color: "#475569" }}>{tab === "users" ? users.length : properties.length}</strong> {tab === "users" ? "perdorues" : "prona"}
+          Total: <strong style={{ color: "#475569" }}>{tab === "users" ? users.length : properties.length}</strong> {tab === "users" ? "users" : "properties"}
         </div>
       </div>
     </div>
