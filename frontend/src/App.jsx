@@ -36,7 +36,7 @@ const getPathFromPage = (page) => {
 };
 
 export default function App() {
-  const [page, setPage] = useState(() => {
+  const [page, setPageState] = useState(() => {
     const pathPage = getPageFromPath(window.location.pathname);
     const savedUser = localStorage.getItem("user");
     const savedToken = localStorage.getItem("token");
@@ -79,9 +79,20 @@ export default function App() {
 
   const showToast = useCallback((message, type = "success") => setToast({ message, type }), []);
 
+  const setPage = useCallback((pageName, params = {}) => {
+    if (params?.id) {
+      setSelectedProperty({ id: params.id });
+    }
+    if (pageName === "property-detail") {
+      setPageState("propertyDetails");
+    } else {
+      setPageState(pageName);
+    }
+  }, []);
+
   useEffect(() => {
     const handlePopState = () => {
-      setPage(getPageFromPath(window.location.pathname));
+      setPageState(getPageFromPath(window.location.pathname));
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -112,13 +123,13 @@ export default function App() {
 
         setUser(restoredUser);
         localStorage.setItem("user", JSON.stringify(restoredUser));
-        setPage(restoredUser.role === "admin" ? "admin" : "dashboard");
+        setPageState(restoredUser.role === "admin" ? "admin" : "dashboard");
       } catch {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         localStorage.removeItem("authExpiresAt");
         setUser(null);
-        setPage("home");
+        setPageState("home");
       }
     };
 
@@ -137,7 +148,7 @@ export default function App() {
     localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("authExpiresAt", String(Date.now() + 7 * 24 * 60 * 60 * 1000));
     showToast(`Welcome back, ${userData.name}!`, "success");
-    setPage(userData.role === "admin" ? "admin" : "dashboard");
+    setPageState(userData.role === "admin" ? "admin" : "dashboard");
   }, [showToast]);
 
   const handleLogout = useCallback(() => {
@@ -147,19 +158,17 @@ export default function App() {
     localStorage.removeItem("authExpiresAt");
     localStorage.removeItem("dashboardView");
     showToast("You've been signed out.", "success");
-    setPage("home");
+    setPageState("home");
   }, [showToast]);
 
   const showNavbar = page === "home" || page === "properties" || page === "propertyDetails" || (!user && page === "dashboard");
 
   return (
     <>
-      {/* Navbar - shfaqet ne faqet publike */}
       {showNavbar && (
         <Navbar page={page} setPage={setPage} user={user} onLogout={handleLogout} />
       )}
 
-      {/* Auth pages */}
       {page === "login" && (
         <LoginPage setPage={setPage} onLoginSuccess={handleLoginSuccess} />
       )}
@@ -167,17 +176,14 @@ export default function App() {
         <RegisterPage setPage={setPage} showToast={showToast} />
       )}
 
-      {/* Admin */}
       {page === "admin" && user?.role === "admin" && (
         <AdminDashboard onLogout={handleLogout} />
       )}
 
-      {/* Seller/Buyer dashboard */}
       {page === "dashboard" && user && (
         <Dashboard user={user} setPage={setPage} onLogout={handleLogout} showToast={showToast} />
       )}
 
-      {/* Home */}
       {page === "home" && (
         <>
           <Home setPage={setPage} user={user} showToast={showToast} />
@@ -185,7 +191,6 @@ export default function App() {
         </>
       )}
 
-      {/* Properties list — Member 2 */}
       {page === "properties" && (
         <>
           <PropertiesPage setPage={setPage} setSelectedProperty={setSelectedProperty} />
@@ -193,12 +198,10 @@ export default function App() {
         </>
       )}
 
-      {/* Property details — Member 2 */}
       {page === "propertyDetails" && (
         <PropertyDetails property={selectedProperty} setPage={setPage} user={user} />
       )}
 
-      {/* Redirect ne home nese jo i loguar dhe mundohet te hype ne dashboard */}
       {!user && page === "dashboard" && (
         <>
           <Home setPage={setPage} user={user} showToast={showToast} />
@@ -206,7 +209,6 @@ export default function App() {
         </>
       )}
 
-      {/* Toast notifications */}
       {toast && (
         <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
       )}

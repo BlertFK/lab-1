@@ -167,7 +167,12 @@ export default function Properties({ setPage, user, showToast }) {
 
                 <div className="prop-footer">
                   <span className="prop-price">{formatPrice(property.price)}</span>
-                  <button className="btn-view" onClick={() => setPage("properties")}>View Details</button>
+                  <button
+                    className="btn-view"
+                    onClick={() => setPage("property-detail", { id: property.id })}
+                  >
+                    View Details
+                  </button>
                 </div>
               </div>
             );
