@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { apiFetch } from "../utils/api";
 
+import Footer from "../components/Footer";
+
 const DEFAULT_IMG = "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=80";
 
 export default function PropertyDetails({ property, setPage, user }) {
@@ -76,7 +78,7 @@ export default function PropertyDetails({ property, setPage, user }) {
   const isBuyer = user?.role === "buyer";
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f8fafc", fontFamily: "'Segoe UI', sans-serif" }}>
+    <><div style={{ minHeight: "100vh", background: "#f8fafc", fontFamily: "'Segoe UI', sans-serif" }}>
 
       <div style={{ maxWidth: 1000, margin: "0 auto", padding: "24px 40px 0" }}>
         <button onClick={() => setPage("properties")}
@@ -92,8 +94,7 @@ export default function PropertyDetails({ property, setPage, user }) {
             src={details.image_url || DEFAULT_IMG}
             alt={details.title}
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            onError={(e) => { e.target.src = DEFAULT_IMG; }}
-          />
+            onError={(e) => { e.target.src = DEFAULT_IMG; } } />
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 28 }}>
@@ -148,7 +149,7 @@ export default function PropertyDetails({ property, setPage, user }) {
                       style={{ width: "100%", padding: "12px 0", background: "#2563eb", color: "white", border: "none", borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: "pointer", marginBottom: 10 }}
                       onMouseEnter={(e) => (e.target.style.background = "#1d4ed8")}
                       onMouseLeave={(e) => (e.target.style.background = "#2563eb")}
-                      onClick={() => { setShowForm(true); setFormError(""); setFormSuccess(""); }}
+                      onClick={() => { setShowForm(true); setFormError(""); setFormSuccess(""); } }
                     >
                       ✉️ Kontakto Shitesin
                     </button>
@@ -162,8 +163,7 @@ export default function PropertyDetails({ property, setPage, user }) {
                         placeholder="Shkruani mesazhin tuaj këtu..."
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        style={{ width: "100%", padding: "10px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 14, fontFamily: "'Segoe UI', sans-serif", resize: "vertical", boxSizing: "border-box", outline: "none" }}
-                      />
+                        style={{ width: "100%", padding: "10px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 14, fontFamily: "'Segoe UI', sans-serif", resize: "vertical", boxSizing: "border-box", outline: "none" }} />
                       {formError && (
                         <p style={{ margin: "6px 0 0", fontSize: 13, color: "#dc2626" }}>{formError}</p>
                       )}
@@ -176,7 +176,7 @@ export default function PropertyDetails({ property, setPage, user }) {
                           {sending ? "Duke dërguar..." : "Dërgo"}
                         </button>
                         <button
-                          onClick={() => { setShowForm(false); setFormError(""); setMessage(""); }}
+                          onClick={() => { setShowForm(false); setFormError(""); setMessage(""); } }
                           style={{ flex: 1, padding: "10px 0", background: "white", color: "#64748b", border: "1px solid #cbd5e1", borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: "pointer" }}
                         >
                           Anulo
@@ -229,6 +229,6 @@ export default function PropertyDetails({ property, setPage, user }) {
           </div>
         </div>
       </div>
-    </div>
+    </div><Footer /></>
   );
 }

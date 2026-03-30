@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { apiFetch } from "../utils/api";
 
+const isValidEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
 export default function RegisterPage({ setPage, showToast }) {
   const [form, setForm] = useState({ name: "", email: "", password: "", role: "" });
   const [error, setError] = useState("");
@@ -11,6 +15,9 @@ export default function RegisterPage({ setPage, showToast }) {
     
     if (!form.name || !form.email || !form.password || !form.role) {
       return setError("Please fill in all fields.");
+    }
+    if (!isValidEmail(form.email)) {
+      return setError("Please enter a valid email address (e.g. you@example.com).");
     }
     if (form.password.length < 6) {
       return setError("Password must be at least 6 characters.");
@@ -97,8 +104,6 @@ export default function RegisterPage({ setPage, showToast }) {
             <option value="" disabled>Select your role</option>
             <option value="buyer">Buyer</option>
             <option value="seller">Seller</option>
-            <option value="renter">Renter</option>
-            <option value="agent">Real Estate Agent</option>
           </select>
         </div>
 
